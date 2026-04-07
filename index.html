@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio Link</title>
+    <title>Pro Bio Link</title>
     <style>
         body { margin: 0; font-family: sans-serif; background: #111; overflow-x: hidden; }
-        .settings-icon { position: fixed; bottom: 20px; right: 20px; background: #007bff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 26px; cursor: pointer; z-index: 1000; display: flex; justify-content: center; align-items: center; }
-        .toolbar { position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; background: #f4f6f9; padding: 25px 20px; box-sizing: border-box; overflow-y: auto; z-index: 999; transition: 0.4s; }
+        .settings-icon { position: fixed; bottom: 20px; right: 20px; background: #007bff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 26px; cursor: pointer; z-index: 1000; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .toolbar { position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; background: #f4f6f9; padding: 25px 20px; box-sizing: border-box; overflow-y: auto; z-index: 999; transition: 0.4s; border-left: 1px solid #ddd; }
         .toolbar.open { right: 0; }
-        .toolbar label { font-size: 13px; font-weight: bold; margin-top: 10px; display: block; color: #555; }
-        input, select, textarea { width: 100%; margin: 5px 0; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .toolbar h3 { margin-top: 0; border-bottom: 2px solid #ccc; padding-bottom: 10px; color: #333; }
+        .toolbar label { font-size: 13px; font-weight: bold; margin-top: 15px; display: block; color: #555; }
+        input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         .btn { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; cursor: pointer; margin-top: 15px; font-weight: bold; }
-        .btn-finish { background: #dc3545; font-size: 18px; }
+        .btn-finish { background: #e91e63; font-size: 18px; margin-top: 30px; margin-bottom: 30px;}
         .row { display: flex; gap: 10px; } .col { flex: 1; }
         
-        .preview-container { width: 100%; min-height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; }
-        .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; }
-        .bg-overlay { position: absolute; width: 100%; height: 100%; z-index: 1; }
-        .preview-content { position: relative; z-index: 2; width: 100%; max-width: 420px; text-align: center; padding: 40px 20px; color: white; }
+        .preview-container { width: 100%; height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; }
+        .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; filter: blur(8px); }
+        .bg-overlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1; }
         
-        .profile-pic { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; display: none; margin: 0 auto 15px; }
-        #displayName { margin: 10px 0 5px; font-size: 32px; font-weight: bold; }
-        #displayBio { font-size: 16px; white-space: pre-wrap; margin-bottom: 20px; }
-        .link-btn { display: block; width: 100%; padding: 15px; margin-bottom: 15px; text-decoration: none; border-radius: 30px; font-weight: bold; box-sizing: border-box; }
+        .preview-content { position: relative; z-index: 2; width: 100%; max-width: 420px; text-align: center; padding: 40px 20px; color: white; height: 90vh; overflow-y: auto; }
         
-        #linkModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; z-index: 2000; color: black; text-align: center; width: 80%; max-width: 400px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #linkInput { width: 100%; padding: 10px; margin: 10px 0; }
+        .profile-pic { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; display: none; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        #displayName { margin: 10px 0 5px; font-weight: bold; font-size: 32px; }
+        #displayBio { font-size: 16px; white-space: pre-wrap; margin-bottom: 30px; opacity: 0.9; }
+        
+        .link-btn { display: flex; justify-content: center; align-items: center; width: 100%; padding: 16px; margin-bottom: 15px; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 16px; transition: 0.3s; box-sizing: border-box; }
+        
+        #linkModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 15px; z-index: 2000; text-align: center; width: 85%; max-width: 380px; box-shadow: 0 0 30px rgba(0,0,0,0.5); color: #333; }
     </style>
 </head>
 <body>
@@ -34,69 +36,93 @@
     <button class="settings-icon" id="settingsIcon" onclick="document.getElementById('toolbar').classList.toggle('open')">⚙️</button>
 
     <div class="toolbar" id="toolbar">
-        <h3>ডিজাইন প্যানেল</h3>
-        <label>ফন্ট স্টাইল:</label>
-        <select onchange="document.getElementById('previewArea').style.fontFamily = this.value">
-            <option value="sans-serif">Sans-serif</option>
-            <option value="serif">Serif</option>
-            <option value="monospace">Monospace</option>
-        </select>
-
-        <label>টেক্সট এলাইনমেন্ট:</label>
-        <select onchange="document.getElementById('previewArea').style.textAlign = this.value">
-            <option value="center">মাঝে</option>
-            <option value="left">বামে</option>
-            <option value="right">ডানে</option>
-        </select>
+        <h3>⚙️ প্রোফাইল ও ডিজাইন</h3>
+        
+        <label>ফন্ট স্টাইল ও এলাইনমেন্ট:</label>
+        <div class="row">
+            <div class="col"><select id="fontStyle" onchange="document.getElementById('previewArea').style.fontFamily = this.value"><option value="sans-serif">Sans-serif</option><option value="serif">Serif</option><option value="monospace">Monospace</option></select></div>
+            <div class="col"><select id="textAlign" onchange="document.getElementById('previewArea').style.textAlign = this.value"><option value="center">মাঝে</option><option value="left">বামে</option><option value="right">ডানে</option></select></div>
+        </div>
 
         <label>প্রোফাইল ছবি:</label>
-        <input type="file" accept="image/*" onchange="encodeImage(event, 'profileImg')">
-        <label>ব্যাকগ্রাউন্ড ছবি:</label>
-        <input type="file" accept="image/*" onchange="encodeImage(event, 'bgArea', true)">
+        <input type="file" accept="image/*" onchange="encodeImg(event, 'profileImg')">
+        <div class="row">
+            <div class="col"><label>বর্ডার কালার:</label><input type="color" id="profBorderColor" value="#ffffff" onchange="document.getElementById('profileImg').style.borderColor = this.value"></div>
+            <div class="col"><label>সাইজ (px):</label><input type="number" id="profBorderWidth" value="4" onchange="document.getElementById('profileImg').style.borderWidth = this.value + 'px'"></div>
+        </div>
 
-        <label>নাম:</label>
+        <label>ব্যাকগ্রাউন্ড ছবি:</label>
+        <input type="file" accept="image/*" onchange="encodeImg(event, 'bgArea', true)">
+        <div class="row">
+            <div class="col"><label>ব্লার (Blur):</label><input type="range" id="bgBlur" min="0" max="30" value="8" onchange="document.getElementById('bgArea').style.filter = `blur(${this.value}px)`"></div>
+            <div class="col"><label>ওভারলে:</label><input type="range" id="bgOverlay" min="0" max="9" value="4" onchange="document.getElementById('overlayArea').style.background = `rgba(0,0,0,0.${this.value})`"></div>
+        </div>
+
+        <label>আপনার নাম:</label>
         <input type="text" id="nameInput" onkeyup="document.getElementById('displayName').innerText = this.value" placeholder="নাম">
+        <div class="row">
+            <div class="col"><label>কালার:</label><input type="color" id="nameColor" value="#ffffff" onchange="document.getElementById('displayName').style.color = this.value"></div>
+            <div class="col"><label>ফন্ট (px):</label><input type="number" id="nameSize" value="32" onchange="document.getElementById('displayName').style.fontSize = this.value + 'px'"></div>
+        </div>
+
         <label>বায়ো:</label>
-        <textarea id="bioInput" onkeyup="document.getElementById('displayBio').innerText = this.value"></textarea>
+        <textarea id="bioInput" rows="3" onkeyup="document.getElementById('displayBio').innerText = this.value" placeholder="বায়ো লিখুন"></textarea>
+        <label>বায়ো কালার:</label>
+        <input type="color" id="bioColor" value="#e0e0e0" onchange="document.getElementById('displayBio').style.color = this.value">
 
         <hr>
-        <h4>বাটন যোগ করুন</h4>
+        <h3>🔘 বাটন কাস্টমাইজেশন</h3>
         <input type="text" id="btnName" placeholder="বাটনের নাম">
         <input type="url" id="btnLink" placeholder="https://...">
+        
         <div class="row">
             <div class="col"><label>ব্যাকগ্রাউন্ড:</label><input type="color" id="btnBg" value="#ffffff"></div>
-            <div class="col"><label>টেক্সট:</label><input type="color" id="btnColor" value="#000000"></div>
+            <div class="col"><label>টেক্সট:</label><input type="color" id="btnText" value="#000000"></div>
         </div>
-        <button class="btn" onclick="createBtn()">+ বাটন যোগ করুন</button>
+        <div class="row">
+            <div class="col"><label>বর্ডার কালার:</label><input type="color" id="btnBorderC" value="#ffffff"></div>
+            <div class="col"><label>বর্ডার (px):</label><input type="number" id="btnBorderW" value="0"></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>আকার:</label>
+                <select id="btnRadius"><option value="30px">গোল</option><option value="12px">বাঁকানো</option><option value="0px">চারকোনা</option></select>
+            </div>
+            <div class="col">
+                <label>শ্যাডো:</label>
+                <select id="btnShadow"><option value="0 5px 15px rgba(0,0,0,0.3)">হ্যাঁ</option><option value="none">না</option></select>
+            </div>
+        </div>
 
-        <hr>
-        <button class="btn btn-finish" onclick="saveBio()">✅ বায়ু সম্পন্ন করুন</button>
+        <button class="btn" onclick="addBtn()">+ বাটন যোগ করুন</button>
+
+        <button class="btn btn-finish" onclick="saveData()">✅ বায়ু সম্পন্ন করুন</button>
     </div>
 
     <div class="preview-container">
-        <div class="bg-blur" id="bgArea" style="filter: blur(8px);"></div>
-        <div class="bg-overlay" id="bgOverlay" style="background: rgba(0,0,0,0.5);"></div>
+        <div class="bg-blur" id="bgArea"></div>
+        <div class="bg-overlay" id="overlayArea"></div>
         
         <div class="preview-content" id="previewArea">
-            <img id="profileImg" class="profile-pic" src="">
+            <img id="profileImg" class="profile-pic">
             <h1 id="displayName">আপনার নাম</h1>
-            <p id="displayBio">আপনার বায়ো...</p>
+            <p id="displayBio">এখানে আপনার বিস্তারিত বায়ো দেখাবে...</p>
             <div id="buttonArea"></div>
         </div>
     </div>
 
     <div id="linkModal">
-        <h3>আপনার বায়ুর লিংক তৈরি হয়েছে!</h3>
-        <input type="text" id="linkInput" readonly>
-        <button class="btn" onclick="copyLink()">লিংক কপি করুন</button>
-        <button class="btn" style="background: #ccc; color: black;" onclick="document.getElementById('linkModal').style.display='none'">বন্ধ করুন</button>
+        <h2>বায়ু সম্পন্ন হয়েছে!</h2>
+        <input type="text" id="shareLink" style="background:#eee; padding: 10px; width: 90%; margin-bottom: 10px;" readonly>
+        <button class="btn" onclick="copyURL()">লিংক কপি করুন</button>
+        <button class="btn" style="background:#666" onclick="location.reload()">নতুন তৈরি করুন</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
-        const firebaseConfig = {
+        const app = initializeApp({
             apiKey: "AIzaSyAMieYVdk6IYh5IYjfiXY35MuXE8Qr75SA",
             authDomain: "bio00-f464e.firebaseapp.com",
             databaseURL: "https://bio00-f464e-default-rtdb.firebaseio.com",
@@ -104,114 +130,94 @@
             storageBucket: "bio00-f464e.firebasestorage.app",
             messagingSenderId: "146338187749",
             appId: "1:146338187749:web:e89348d7f3c548bea7470c"
-        };
-
-        const app = initializeApp(firebaseConfig);
+        });
         const db = getDatabase(app);
 
-        let profileBase64 = "";
-        let bgBase64 = "";
-        let buttonsData = [];
+        let pPic = "", bPic = "", btns = [];
 
-        // ছবিকে Base64 এ রূপান্তর (লিংকে সেভ করার জন্য)
-        window.encodeImage = function(event, id, isBg = false) {
-            let file = event.target.files[0];
+        window.encodeImg = (e, id, isBg=false) => {
+            let file = e.target.files[0];
+            if (!file) return;
             let reader = new FileReader();
-            reader.onloadend = function() {
-                if(isBg) {
-                    bgBase64 = reader.result;
-                    document.getElementById(id).style.backgroundImage = `url(${reader.result})`;
-                } else {
-                    profileBase64 = reader.result;
-                    document.getElementById(id).src = reader.result;
-                    document.getElementById(id).style.display = 'block';
+            reader.onload = () => {
+                let result = reader.result;
+                if(isBg) { 
+                    bPic = result; 
+                    document.getElementById('bgArea').style.backgroundImage = "url('" + result + "')";
+                } else { 
+                    pPic = result; 
+                    document.getElementById('profileImg').src = result; 
+                    document.getElementById('profileImg').style.display = 'block'; 
                 }
-            }
-            if(file) reader.readAsDataURL(file);
-        }
-
-        window.createBtn = function() {
-            let name = document.getElementById('btnName').value;
-            let link = document.getElementById('btnLink').value;
-            let bg = document.getElementById('btnBg').value;
-            let color = document.getElementById('btnColor').value;
-            
-            if(name && link) {
-                buttonsData.push({ name, link, bg, color });
-                renderButtons();
-                document.getElementById('btnName').value = '';
-                document.getElementById('btnLink').value = '';
-            }
-        }
-
-        function renderButtons() {
-            let html = "";
-            buttonsData.forEach(btn => {
-                html += `<a href="${btn.link}" class="link-btn" target="_blank" style="background:${btn.bg}; color:${btn.color};">${btn.name}</a>`;
-            });
-            document.getElementById('buttonArea').innerHTML = html;
-        }
-
-        // ফায়ারবেসে ডাটা সেভ করা
-        window.saveBio = async function() {
-            let bioId = "bio_" + Math.random().toString(36).substr(2, 9);
-            let data = {
-                name: document.getElementById('displayName').innerText,
-                bio: document.getElementById('displayBio').innerText,
-                font: document.getElementById('previewArea').style.fontFamily || "sans-serif",
-                align: document.getElementById('previewArea').style.textAlign || "center",
-                profilePic: profileBase64,
-                bgImage: bgBase64,
-                buttons: buttonsData
             };
+            reader.readAsDataURL(file);
+        };
 
-            await set(ref(db, 'bios/' + bioId), data);
-            
-            let shareUrl = window.location.href.split('?')[0] + "?id=" + bioId;
-            document.getElementById('linkInput').value = shareUrl;
+        window.addBtn = () => {
+            let n = document.getElementById('btnName').value, l = document.getElementById('btnLink').value;
+            if(n && l) {
+                btns.push({ n, l, bg: document.getElementById('btnBg').value, c: document.getElementById('btnText').value, r: document.getElementById('btnRadius').value, bc: document.getElementById('btnBorderC').value, bw: document.getElementById('btnBorderW').value, sh: document.getElementById('btnShadow').value });
+                renderBtns();
+                document.getElementById('btnName').value = ''; document.getElementById('btnLink').value = '';
+            }
+        };
+
+        function renderBtns() {
+            document.getElementById('buttonArea').innerHTML = btns.map(b => `<a href="${b.l}" class="link-btn" target="_blank" style="background:${b.bg}; color:${b.c}; border-radius:${b.r}; border:${b.bw}px solid ${b.bc}; box-shadow:${b.sh}">${b.n}</a>`).join('');
+        }
+
+        window.saveData = async () => {
+            let id = "b" + Date.now().toString(36);
+            let payload = {
+                n: document.getElementById('displayName').innerText,
+                b: document.getElementById('displayBio').innerText,
+                p: pPic, bg: bPic, btns: btns,
+                style: {
+                    font: document.getElementById('fontStyle').value,
+                    align: document.getElementById('textAlign').value,
+                    pBc: document.getElementById('profBorderColor').value,
+                    pBw: document.getElementById('profBorderWidth').value,
+                    bBlur: document.getElementById('bgBlur').value,
+                    bOv: document.getElementById('bgOverlay').value,
+                    nC: document.getElementById('nameColor').value,
+                    nS: document.getElementById('nameSize').value,
+                    bC: document.getElementById('bioColor').value
+                }
+            };
+            await set(ref(db, 'bios/' + id), payload);
+            document.getElementById('shareLink').value = window.location.href.split('?')[0] + "?id=" + id;
             document.getElementById('linkModal').style.display = 'block';
-        }
+        };
 
-        window.copyLink = function() {
-            let copyText = document.getElementById("linkInput");
-            copyText.select();
-            document.execCommand("copy");
-            alert("লিংক কপি হয়েছে!");
-        }
+        window.copyURL = () => { document.getElementById('shareLink').select(); document.execCommand('copy'); alert("লিংক কপি হয়েছে!"); };
 
-        // লিংকে আইডি থাকলে ডাটা লোড করা
-        window.onload = async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const bioId = urlParams.get('id');
-            
-            if(bioId) {
-                document.getElementById('settingsIcon').style.display = 'none'; // ভিউয়ার মোডে টুলবার লুকানো
-                document.getElementById('toolbar').style.display = 'none';
-                
-                const snapshot = await get(ref(db, 'bios/' + bioId));
-                if(snapshot.exists()) {
-                    let data = snapshot.val();
-                    document.getElementById('displayName').innerText = data.name;
-                    document.getElementById('displayBio').innerText = data.bio;
-                    document.getElementById('previewArea').style.fontFamily = data.font;
-                    document.getElementById('previewArea').style.textAlign = data.align;
+        window.onload = async () => {
+            const id = new URLSearchParams(window.location.search).get('id');
+            if(id) {
+                document.getElementById('settingsIcon').style.display = 'none';
+                const s = await get(ref(db, 'bios/' + id));
+                if(s.exists()) {
+                    const d = s.val();
+                    document.getElementById('displayName').innerText = d.n;
+                    document.getElementById('displayBio').innerText = d.b;
+                    if(d.p) { document.getElementById('profileImg').src = d.p; document.getElementById('profileImg').style.display='block'; }
+                    if(d.bg) { document.getElementById('bgArea').style.backgroundImage = `url('${d.bg}')`; }
                     
-                    if(data.profilePic) {
-                        document.getElementById('profileImg').src = data.profilePic;
-                        document.getElementById('profileImg').style.display = 'block';
+                    if(d.style) {
+                        document.getElementById('previewArea').style.fontFamily = d.style.font;
+                        document.getElementById('previewArea').style.textAlign = d.style.align;
+                        document.getElementById('profileImg').style.borderColor = d.style.pBc;
+                        document.getElementById('profileImg').style.borderWidth = d.style.pBw + 'px';
+                        document.getElementById('bgArea').style.filter = `blur(${d.style.bBlur}px)`;
+                        document.getElementById('overlayArea').style.background = `rgba(0,0,0,0.${d.style.bOv})`;
+                        document.getElementById('displayName').style.color = d.style.nC;
+                        document.getElementById('displayName').style.fontSize = d.style.nS + 'px';
+                        document.getElementById('displayBio').style.color = d.style.bC;
                     }
-                    if(data.bgImage) {
-                        document.getElementById('bgArea').style.backgroundImage = `url(${data.bgImage})`;
-                    }
-                    if(data.buttons) {
-                        buttonsData = data.buttons;
-                        renderButtons();
-                    }
-                } else {
-                    alert("বায়ু পাওয়া যায়নি!");
+                    if(d.btns) { btns = d.btns; renderBtns(); }
                 }
             }
-        }
+        };
     </script>
 </body>
 </html>
