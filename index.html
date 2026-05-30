@@ -5,37 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro Bio Link</title>
     <style>
+        /* মূল পেজ ডিজাইন এবং ফন্ট সেটিংস */
         body { margin: 0; font-family: sans-serif; background: #111; overflow-x: hidden; }
-        .settings-icon { position: fixed; bottom: 20px; right: 20px; background: #007bff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 26px; cursor: pointer; z-index: 1000; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        /* সেটিংস আইকন বাটন */
+        .settings-icon { position: fixed; bottom: 20px; right: 20px; background: #007bff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 26px; cursor: pointer; z-index: 1000; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; }
+        .settings-icon:hover { transform: rotate(90deg) scale(1.1); }
+        
+        /* এডিটর সাইডবার (টুলবার) */
         .toolbar { position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; background: #f4f6f9; padding: 25px 20px; box-sizing: border-box; overflow-y: auto; z-index: 999; transition: 0.4s; border-left: 1px solid #ddd; }
         .toolbar.open { right: 0; }
         .toolbar h3 { margin-top: 0; border-bottom: 2px solid #ccc; padding-bottom: 10px; color: #333; }
         .toolbar label { font-size: 13px; font-weight: bold; margin-top: 15px; display: block; color: #555; }
+        
+        /* ইনপুট ফিল্ড ও বাটনসমূহ */
         input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .btn { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; cursor: pointer; margin-top: 15px; font-weight: bold; }
+        .btn { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; cursor: pointer; margin-top: 15px; font-weight: bold; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-finish { background: #e91e63; font-size: 18px; margin-top: 30px; margin-bottom: 30px;}
         .row { display: flex; gap: 10px; } .col { flex: 1; }
         
+        /* ইউজারনেম সাজেশন ও পাসওয়ার্ড চেকার স্টাইল */
+        .suggestion-box { background: #e2e8f0; padding: 8px; border-radius: 6px; margin-top: 5px; font-size: 12px; cursor: pointer; display: inline-block; color: #0284c7; font-weight: bold; }
+        .pwd-requirement { font-size: 11px; color: #ef4444; margin-top: 2px; font-weight: 500; }
+        .pwd-requirement.valid { color: #22c55e; }
+        
+        /* লাইভ বাটন লিস্ট এডিটর */
+        .added-btn-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
+        .del-btn { background: #dc3545; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+        
+        /* লাইভ প্রিভিউ সেকশন */
         .preview-container { width: 100%; height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; }
-        .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; filter: blur(8px); }
-        .bg-overlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1; }
+        .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; transition: 0.3s; }
+        .bg-overlay { position: absolute; width: 100%; height: 100%; z-index: 1; transition: 0.3s; }
         
-        .preview-content { position: relative; z-index: 2; width: 100%; max-width: 420px; text-align: center; padding: 40px 20px; color: white; height: 90vh; overflow-y: auto; }
+        /* কাঁচের মতো গ্লাসমরফিজম প্রিভিউ বক্স */
+        .preview-content { position: relative; z-index: 2; width: 100%; max-width: 420px; text-align: center; padding: 40px 20px; color: white; height: 90vh; overflow-y: auto; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); box-sizing: border-box; }
         
-        .profile-pic { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; display: none; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        /* প্রোফাইল পিকচার এবং ভেরিফাইড ব্যাজ */
+        .profile-wrapper { position: relative; display: inline-block; margin: 0 auto 15px; }
+        .profile-pic { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; display: none; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .verified-badge { position: absolute; bottom: 10px; right: 10px; background: #007bff; color: white; border-radius: 50%; width: 25px; height: 25px; display: none; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; }
+        
         #displayName { margin: 10px 0 5px; font-weight: bold; font-size: 32px; }
         #displayBio { font-size: 16px; white-space: pre-wrap; margin-bottom: 30px; opacity: 0.9; }
         
-        .link-btn { display: flex; justify-content: center; align-items: center; width: 100%; padding: 16px; margin-bottom: 15px; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 16px; transition: 0.3s; box-sizing: border-box; }
+        /* বায়ো লিংক বাটনসমূহ এবং অ্যানিমেশন */
+        .link-btn { display: flex; justify-content: center; align-items: center; width: 100%; padding: 16px; margin-bottom: 15px; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 16px; transition: 0.3s ease; box-sizing: border-box; }
+        .link-btn:hover { transform: scale(1.04); box-shadow: 0 8px 25px rgba(255,255,255,0.2) !important; }
         
-        #linkModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 15px; z-index: 2000; text-align: center; width: 85%; max-width: 380px; box-shadow: 0 0 30px rgba(0,0,0,0.5); color: #333; }
+        /* মোডাল উইন্ডো স্টাইল (পাসওয়ার্ড ও লিংক দেখানোর জন্য) */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index: 2000; }
+        .custom-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 15px; text-align: center; width: 85%; max-width: 400px; color: #333; box-shadow: 0 0 30px rgba(0,0,0,0.6); }
     </style>
 </head>
 <body>
 
+    <!-- সেটিংস গিয়ার বাটন -->
     <button class="settings-icon" id="settingsIcon" onclick="document.getElementById('toolbar').classList.toggle('open')">⚙️</button>
 
+    <!-- বাম পাশের কন্ট্রোল প্যানেল (টুলবার) -->
     <div class="toolbar" id="toolbar">
+        <h3>🔐 অ্যাকাউন্ট সেটিংস</h3>
+        
+        <label>ইউজারনেম (কাস্টম আইডি):</label>
+        <div style="display: flex; align-items: center; background: #eee; padding-left: 10px; border-radius: 6px;">
+            <span style="font-weight: bold; color: #555;">boos@</span>
+            <input type="text" id="usernameInput" style="background: transparent; border: none; margin: 0;" placeholder="username">
+        </div>
+        <div id="suggestedUser" class="suggestion-box" onclick="applySuggestion()">🪄 সাজেস্টেড আইডি ব্যবহার করুন</div>
+
+        <label>সিক্রেট পাসওয়ার্ড:</label>
+        <input type="password" id="passwordInput" placeholder="কমপক্ষে ৬ ডিজিট, ১টি বড়, ১টি ছোট অক্ষর ও @">
+        <div id="pwdTracker">
+            <div id="reqLen" class="pwd-requirement">❌ কমপক্ষে ৬ ডিজিট</div>
+            <div id="reqUpper" class="pwd-requirement">❌ কমপক্ষে ১টি বড় হাতের অক্ষর (A-Z)</div>
+            <div id="reqLower" class="pwd-requirement">❌ কমপক্ষে ১টি ছোট হাতের অক্ষর (a-z)</div>
+            <div id="reqSpecial" class="pwd-requirement">❌ কমপক্ষে ১টি স্পেশাল ক্যারেক্টার (@)</div>
+        </div>
+
+        <hr>
         <h3>⚙️ প্রোফাইল ও ডিজাইন</h3>
         
         <label>ফন্ট স্টাইল ও এলাইনমেন্ট:</label>
@@ -44,8 +93,18 @@
             <div class="col"><select id="textAlign" onchange="document.getElementById('previewArea').style.textAlign = this.value"><option value="center">মাঝে</option><option value="left">বামে</option><option value="right">ডানে</option></select></div>
         </div>
 
-        <label>প্রোফাইল ছবি:</label>
+        <label>প্রোফাইল ছবি ও ব্যাজ:</label>
         <input type="file" accept="image/*" onchange="encodeImg(event, 'profileImg')">
+        <div class="row">
+            <div class="col"><button class="btn" style="background:#6c757d; margin:5px 0; padding:8px;" onclick="removeImg('profileImg')">ছবি সরান</button></div>
+            <div class="col">
+                <select id="vBadge" onchange="document.getElementById('verifiedBadge').style.display = this.value === 'yes' ? 'flex' : 'none'" style="margin:5px 0; padding:8px;">
+                    <option value="no">টিক চিহ্ন: না</option>
+                    <option value="yes">টিক চিহ্ন: হ্যাঁ</option>
+                </select>
+            </div>
+        </div>
+        
         <div class="row">
             <div class="col"><label>বর্ডার কালার:</label><input type="color" id="profBorderColor" value="#ffffff" onchange="document.getElementById('profileImg').style.borderColor = this.value"></div>
             <div class="col"><label>সাইজ (px):</label><input type="number" id="profBorderWidth" value="4" onchange="document.getElementById('profileImg').style.borderWidth = this.value + 'px'"></div>
@@ -53,6 +112,7 @@
 
         <label>ব্যাকগ্রাউন্ড ছবি:</label>
         <input type="file" accept="image/*" onchange="encodeImg(event, 'bgArea', true)">
+        <button class="btn" style="background:#6c757d; margin:5px 0; padding:8px;" onclick="removeImg('bgArea', true)">ছবি সরান</button>
         <div class="row">
             <div class="col"><label>ব্লার (Blur):</label><input type="range" id="bgBlur" min="0" max="30" value="8" onchange="document.getElementById('bgArea').style.filter = `blur(${this.value}px)`"></div>
             <div class="col"><label>ওভারলে:</label><input type="range" id="bgOverlay" min="0" max="9" value="4" onchange="document.getElementById('overlayArea').style.background = `rgba(0,0,0,0.${this.value})`"></div>
@@ -95,33 +155,62 @@
         </div>
 
         <button class="btn" onclick="addBtn()">+ বাটন যোগ করুন</button>
+        
+        <!-- যোগ করা বাটনগুলোর তালিকা (ডিলিট করার জন্য) -->
+        <div id="addedButtonsList"></div>
 
         <button class="btn btn-finish" onclick="saveData()">✅ বায়ু সম্পন্ন করুন</button>
     </div>
 
+    <!-- ডান পাশের লাইভ প্রিভিউ এরিয়া -->
     <div class="preview-container">
-        <div class="bg-blur" id="bgArea"></div>
-        <div class="bg-overlay" id="overlayArea"></div>
+        <div class="bg-blur" id="bgArea" style="background-color: #111;"></div>
+        <div class="bg-overlay" id="overlayArea" style="background: rgba(0,0,0,0.4);"></div>
         
         <div class="preview-content" id="previewArea">
-            <img id="profileImg" class="profile-pic">
+            <div class="profile-wrapper">
+                <img id="profileImg" class="profile-pic">
+                <div class="verified-badge" id="verifiedBadge">✓</div>
+            </div>
             <h1 id="displayName">আপনার নাম</h1>
             <p id="displayBio">এখানে আপনার বিস্তারিত বায়ো দেখাবে...</p>
             <div id="buttonArea"></div>
         </div>
     </div>
 
-    <div id="linkModal">
-        <h2>বায়ু সম্পন্ন হয়েছে!</h2>
-        <input type="text" id="shareLink" style="background:#eee; padding: 10px; width: 90%; margin-bottom: 10px;" readonly>
-        <button class="btn" onclick="copyURL()">লিংক কপি করুন</button>
-        <button class="btn" style="background:#666" onclick="location.reload()">নতুন তৈরি করুন</button>
+    <!-- গেট পাসওয়ার্ড মোডাল (এডিট মোডে ঢোকার ভেরিফিকেশন) -->
+    <div class="modal-overlay" id="authModal">
+        <div class="custom-modal">
+            <h2>🔐 এডিট মোড ভেরিফিকেশন</h2>
+            <p>এই বায়োটি এডিট করতে আপনার সিক্রেট পাসওয়ার্ডটি দিন:</p>
+            <input type="password" id="authPassword" placeholder="পাসওয়ার্ড লিখুন">
+            <button class="btn" onclick="verifyAndEdit()">প্রবেশ করুন</button>
+        </div>
     </div>
 
+    <!-- সাকসেস লিংক জেনারেটর মোডাল (২টি লিংক দেখানোর জায়গা) -->
+    <div class="modal-overlay" id="linkModal">
+        <div class="custom-modal">
+            <h2>🎉 বায়ু সম্পন্ন হয়েছে!</h2>
+            
+            <label style="text-align:left; font-weight:bold; display:block; font-size:12px;">🔗 শেয়ার লিংক (সবাইকে দেখানোর জন্য):</label>
+            <input type="text" id="shareLink" style="background:#eee;" readonly>
+            <button class="btn" style="margin-top:5px; padding:6px; font-size:13px;" onclick="copyURL('shareLink')">শেয়ার লিংক কপি করুন</button>
+            
+            <label style="text-align:left; font-weight:bold; display:block; font-size:12px; margin-top:15px; color:#e91e63;">🔐 এডিট লিংক (ভবিষ্যতে এডিট করার জন্য):</label>
+            <input type="text" id="editLink" style="background:#ffe4e6; color:#b91c1c;" readonly>
+            <button class="btn" style="margin-top:5px; padding:6px; font-size:13px; background:#e91e63;" onclick="copyURL('editLink')">এডিট লিংক কপি করুন</button>
+            
+            <button class="btn" style="background:#666; margin-top:20px;" onclick="window.location.href=window.location.href.split('?')[0]">নতুন তৈরি করুন</button>
+        </div>
+    </div>
+
+    <!-- ফায়ারবেস লজিক এবং স্ক্রিপ্ট মডিউল -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
+        // ফায়ারবেস অ্যাপ কনফিগারেশন
         const app = initializeApp({
             apiKey: "AIzaSyAMieYVdk6IYh5IYjfiXY35MuXE8Qr75SA",
             authDomain: "bio00-f464e.firebaseapp.com",
@@ -133,8 +222,52 @@
         });
         const db = getDatabase(app);
 
-        let pPic = "", bPic = "", btns = [];
+        let pPic = "", bPic = "", btns = [], targetId = null, loadedPassword = "";
 
+        // ইউনিক ইউজারনেম সাজেশন জেনারেটর কোড (_138A01 ফরম্যাট)
+        function generateRandomSuffix() {
+            const chars = "0123456789ABCDEF";
+            let suffix = "_";
+            for(let i=0; i<6; i++) {
+                suffix += chars[Math.floor(Math.random() * 16)];
+            }
+            return suffix;
+        }
+        let generatedSuggestion = "user" + generateRandomSuffix();
+        document.getElementById('suggestedUser').innerText = "🪄 সাজেস্টেড আইডি: boos@" + generatedSuggestion;
+
+        window.applySuggestion = () => {
+            document.getElementById('usernameInput').value = generatedSuggestion;
+        };
+
+        // পাসওয়ার্ড সিকিউরিটি এআইডিটেক্টর/ভ্যালিডেটর ট্র্যাকিং
+        const pwdInput = document.getElementById('passwordInput');
+        pwdInput.addEventListener('input', () => {
+            const val = pwdInput.value;
+            
+            const isLen = val.length >= 6;
+            const isUpper = /[A-Z]/.test(val);
+            const isLower = /[a-z]/.test(val);
+            const isSpecial = val.includes('@');
+            
+            updateRequirement('reqLen', isLen);
+            updateRequirement('reqUpper', isUpper);
+            updateRequirement('reqLower', isLower);
+            updateRequirement('reqSpecial', isSpecial);
+        });
+
+        function updateRequirement(id, isValid) {
+            const el = document.getElementById(id);
+            if(isValid) {
+                el.classList.add('valid');
+                el.innerText = el.innerText.replace('❌', '✅');
+            } else {
+                el.classList.remove('valid');
+                el.innerText = el.innerText.replace('✅', '❌');
+            }
+        }
+
+        // ছবি প্রসেসিং ও এনকোডিং (Base64)
         window.encodeImg = (e, id, isBg=false) => {
             let file = e.target.files[0];
             if (!file) return;
@@ -153,6 +286,19 @@
             reader.readAsDataURL(file);
         };
 
+        // ছবি রিমুভ করার ফাংশন
+        window.removeImg = (id, isBg=false) => {
+            if(isBg) {
+                bPic = "";
+                document.getElementById('bgArea').style.backgroundImage = "none";
+            } else {
+                pPic = "";
+                document.getElementById('profileImg').src = "";
+                document.getElementById('profileImg').style.display = 'none';
+            }
+        };
+
+        // কাস্টম বাটন অ্যাড ও ডিলিট ম্যানেজমেন্ট
         window.addBtn = () => {
             let n = document.getElementById('btnName').value, l = document.getElementById('btnLink').value;
             if(n && l) {
@@ -162,16 +308,53 @@
             }
         };
 
+        window.deleteBtn = (index) => {
+            btns.splice(index, 1);
+            renderBtns();
+        };
+
         function renderBtns() {
+            // লাইভ ভিউ রেন্ডার
             document.getElementById('buttonArea').innerHTML = btns.map(b => `<a href="${b.l}" class="link-btn" target="_blank" style="background:${b.bg}; color:${b.c}; border-radius:${b.r}; border:${b.bw}px solid ${b.bc}; box-shadow:${b.sh}">${b.n}</a>`).join('');
+            
+            // টুলবারের ভেতরে ডিলিট অপশনসহ রেন্ডার
+            document.getElementById('addedButtonsList').innerHTML = btns.map((b, i) => `
+                <div class="added-btn-item">
+                    <span>${b.n}</span>
+                    <button class="del-btn" onclick="deleteBtn(${i})">🗑️</button>
+                </div>
+            `).join('');
         }
 
+        // ফায়ারবেজে ডাটা সেভ করার মূল ফাংশন
         window.saveData = async () => {
-            let id = "b" + Date.now().toString(36);
+            let uInput = document.getElementById('usernameInput').value.trim();
+            let pInput = document.getElementById('passwordInput').value;
+            
+            if(!uInput) { alert("অনুগ্রহ করে একটি ইউজারনেম দিন!"); return; }
+            
+            // পাসওয়ার্ড পলিসি রি-চেক ভ্যালিডেশন
+            const isPValid = pInput.length >= 6 && /[A-Z]/.test(pInput) && /[a-z]/.test(pInput) && pInput.includes('@');
+            if(!isPValid) { alert("পাসওয়ার্ড শর্তাবলী পূরণ করেনি!"); return; }
+
+            let id = "boos_" + uInput;
+
+            // যদি নতুন ক্রিয়েশন মোড হয় তবে ইউজারনেম ডুপ্লিকেট চেক করবে
+            if(!targetId) {
+                const checkExits = await get(ref(db, 'bios/' + id));
+                if(checkExits.exists()) {
+                    alert("এই ইউজারনেমটি ইতিমধ্যে ব্যবহার করা হয়েছে! অন্য আইডি ট্রাই করুন বা সাজেস্টেড আইডি ব্যবহার করুন।");
+                    return;
+                }
+            }
+
             let payload = {
+                username: uInput,
+                password: pInput,
                 n: document.getElementById('displayName').innerText,
                 b: document.getElementById('displayBio').innerText,
                 p: pPic, bg: bPic, btns: btns,
+                vBadge: document.getElementById('vBadge').value,
                 style: {
                     font: document.getElementById('fontStyle').value,
                     align: document.getElementById('textAlign').value,
@@ -184,24 +367,49 @@
                     bC: document.getElementById('bioColor').value
                 }
             };
-            await set(ref(db, 'bios/' + id), payload);
-            document.getElementById('shareLink').value = window.location.href.split('?')[0] + "?id=" + id;
-            document.getElementById('linkModal').style.display = 'block';
+
+            try {
+                await set(ref(db, 'bios/' + id), payload);
+                let baseUrl = window.location.href.split('?')[0];
+                document.getElementById('shareLink').value = baseUrl + "?id=" + id;
+                document.getElementById('editLink').value = baseUrl + "?id=" + id + "&mode=edit";
+                document.getElementById('linkModal').style.display = 'block';
+            } catch (error) {
+                alert("ডাটাবেজে সেভ করতে সমস্যা হয়েছে। ছবির ফাইল সাইজ কমিয়ে চেষ্টা করুন।");
+            }
         };
 
-        window.copyURL = () => { document.getElementById('shareLink').select(); document.execCommand('copy'); alert("লিংক কপি হয়েছে!"); };
+        // লিংক কপি করার ফাংশন
+        window.copyURL = (fieldId) => { 
+            let targetField = document.getElementById(fieldId);
+            targetField.select();
+            navigator.clipboard.writeText(targetField.value);
+            alert("লিংকটি সফলভাবে কপি হয়েছে!"); 
+        };
 
+        // পেজ লোড লজিক (ভিউ মোড বনাম এডিট মোড অথেন্টিকেশন)
         window.onload = async () => {
-            const id = new URLSearchParams(window.location.search).get('id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const mode = urlParams.get('mode');
+
             if(id) {
+                // ভিউ বা এডিট মোডে থাকলে এডিটর প্যানেল প্রাথমিকভাবে বন্ধ থাকবে
                 document.getElementById('settingsIcon').style.display = 'none';
+                document.getElementById('toolbar').classList.remove('open');
+                
                 const s = await get(ref(db, 'bios/' + id));
                 if(s.exists()) {
                     const d = s.val();
+                    loadedPassword = d.password;
+                    targetId = id;
+
+                    // ডাটা প্রিভিউতে সেট করা
                     document.getElementById('displayName').innerText = d.n;
                     document.getElementById('displayBio').innerText = d.b;
                     if(d.p) { document.getElementById('profileImg').src = d.p; document.getElementById('profileImg').style.display='block'; }
                     if(d.bg) { document.getElementById('bgArea').style.backgroundImage = `url('${d.bg}')`; }
+                    if(d.vBadge === 'yes') { document.getElementById('verifiedBadge').style.display = 'flex'; }
                     
                     if(d.style) {
                         document.getElementById('previewArea').style.fontFamily = d.style.font;
@@ -215,7 +423,31 @@
                         document.getElementById('displayBio').style.color = d.style.bC;
                     }
                     if(d.btns) { btns = d.btns; renderBtns(); }
+
+                    // যদি এডিট লিংকে ক্লিক করে আসে তবে পাসওয়ার্ড গেটওয়ে ওপেন হবে
+                    if(mode === 'edit') {
+                        document.getElementById('authModal').style.display = 'block';
+                        
+                        // ফর্ম এডিটর ফিল্ডে আগের ওল্ড ডাটা লোড করে রাখা
+                        document.getElementById('usernameInput').value = d.username || "";
+                        document.getElementById('usernameInput').disabled = true; // একবার আইডি সেট হয়ে গেলে তা পরিবর্তন করা যাবে না
+                        document.getElementById('passwordInput').value = d.password || "";
+                        document.getElementById('nameInput').value = d.n;
+                        document.getElementById('bioInput').value = d.b;
+                    }
                 }
+            }
+        };
+
+        // পাসওয়ার্ড চেক করে এডিটর প্যানেল আনলক করার ভেরিফিকেশন ফাংশন
+        window.verifyAndEdit = () => {
+            let enteredPwd = document.getElementById('authPassword').value;
+            if(enteredPwd === loadedPassword) {
+                document.getElementById('authModal').style.display = 'none';
+                document.getElementById('settingsIcon').style.display = 'flex';
+                document.getElementById('toolbar').classList.add('open');
+            } else {
+                alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
             }
         };
     </script>
