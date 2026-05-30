@@ -5,18 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro Bio Link Generator</title>
     
-    <!-- ডাইনামিক এসইও এবং সোশ্যাল প্রিভিউ মেটা ট্যাগ -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="My Pro Bio Link">
-    <meta property="og:description" content="Connect with me through my customized professional bio link.">
-    <meta property="og:image" content="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/user.svg">
+    <meta property="og:title" id="metaOgTitle" content="My Pro Bio Link">
+    <meta property="og:description" id="metaOgDesc" content="Connect with me through my customized professional bio link.">
+    <meta property="og:image" id="metaOgImg" content="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/user.svg">
 
-    <!-- Cropper.css এবং FontAwesome আইকন লাইব্রেরি -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ডার্ক নিওন গ্লাসমরমফিজম কোর ডিজাইন */
         :root {
             --primary: #00f2fe;
             --secondary: #4facfe;
@@ -39,7 +36,6 @@
         .editor-side { width: 450px; background: var(--panel-bg); backdrop-filter: blur(20px); border-right: 1px solid var(--border-glow); padding: 25px; box-sizing: border-box; overflow-y: auto; z-index: 10; transition: 0.3s; }
         .preview-side { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; background: #05070a; overflow: hidden; }
 
-        /* মোবাইল ফ্লোটিং গিয়ার বাটন */
         .toggle-editor-btn { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; z-index: 1000; display: none; justify-content: center; align-items: center; box-shadow: 0 0 15px var(--primary); }
 
         h3 { margin-top: 25px; color: var(--primary); font-size: 16px; border-left: 3px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
@@ -53,15 +49,11 @@
         .btn-finish:hover { box-shadow: 0 6px 25px rgba(255, 0, 127, 0.5); }
         .btn-sec { background: rgba(255,255,255,0.1); color: #fff; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; }
 
-        .row { display: flex; gap: 10px; } .col { flex: 1; }
-        
-        /* লাইভ স্ট্যাটাস ট্র্যাকার */
         .suggestion-box { background: rgba(0, 242, 254, 0.1); padding: 8px; border-radius: 6px; margin-top: 5px; font-size: 12px; cursor: pointer; display: inline-block; color: var(--primary); font-weight: bold; border: 1px dashed var(--primary); }
         .live-status { font-size: 12px; font-weight: bold; margin-top: 4px; display: block; }
         .pwd-requirement { font-size: 11px; color: #ef4444; margin-top: 3px; display: flex; align-items: center; gap: 5px; }
         .pwd-requirement.valid { color: #22c55e; }
         
-        /* প্রিভিউ এরিয়া ডিজাইন */
         .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; filter: blur(8px); }
         .bg-overlay { position: absolute; width: 100%; height: 100%; z-index: 1; background: rgba(5, 7, 10, 0.6); }
         
@@ -74,19 +66,16 @@
         #displayName { margin: 10px 0 5px; font-weight: 700; font-size: 26px; }
         #displayBio { font-size: 14px; opacity: 0.8; margin-bottom: 20px; white-space: pre-wrap; }
         
-        /* সোশ্যাল জোন */
         .social-icons-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
         .social-icon-live { font-size: 20px; color: #fff; transition: 0.3s; text-decoration: none; width: 40px; height: 40px; display: none; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
         .social-icon-live:hover { transform: scale(1.1); color: var(--primary); border-color: var(--primary); }
 
-        /* মোডাল গ্লাস স্টাইল */
         .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(10px); }
         .custom-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161b26; padding: 25px; border-radius: 16px; text-align: center; width: 90%; max-width: 420px; color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(0, 242, 254, 0.2); }
         
         .cropper-wrapper { width: 100%; height: 260px; background: #000; margin-top: 15px; border-radius: 8px; overflow: hidden; }
         .cropper-wrapper img { max-width: 100%; display: block; }
 
-        /* লিংক বাটন এলিমেন্ট */
         .link-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; transition: 0.3s; box-sizing: border-box; text-align: center; }
         .link-btn:hover { transform: scale(1.03); }
         .added-btn-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 10px; margin-top: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
@@ -110,7 +99,6 @@
     <button class="toggle-editor-btn" id="toggleEditorBtn" onclick="toggleMobileEditor()">⚙️</button>
 
     <div class="main-container">
-        <!-- ১. বাম পাশের এডিটর প্যানেল -->
         <div class="editor-side" id="editorPanel">
             <h2 style="margin-top:0; font-size:20px; color:#fff; display:flex; align-items:center; gap:8px;">
                 <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary)"></i> প্রফেশনাল বায়ো মেকার
@@ -136,21 +124,21 @@
 
             <h3>🎨 প্রি-সেট থিম সিলেকশন</h3>
             <div class="theme-grid">
-                <div class="theme-opt" onclick="applyPresetTheme('neon')">🌌 নিওন ডার্ক</div>
-                <div class="theme-opt" onclick="applyPresetTheme('sunset')">🌅 সানসেট</div>
-                <div class="theme-opt" onclick="applyPresetTheme('minimal')">🏳️ মিনিমাল</div>
-                <div class="theme-opt" onclick="applyPresetTheme('emerald')">🍃 এমারেল্ড</div>
-                <div class="theme-opt" onclick="applyPresetTheme('gold')">👑 রয়্যাল গোল্ড</div>
-                <div class="theme-opt" onclick="applyPresetTheme('glass')">🔮 পিওর গ্লাস</div>
+                <div class="theme-opt" onclick="window.applyPresetTheme('neon')">🌌 নিওন ডার্ক</div>
+                <div class="theme-opt" onclick="window.applyPresetTheme('sunset')">🌅 সানসেট</div>
+                <div class="theme-opt" onclick="window.applyPresetTheme('minimal')">🏳️ মিনিমাল</div>
+                <div class="theme-opt" onclick="window.applyPresetTheme('emerald')">🍃 এমারেল্ড</div>
+                <div class="theme-opt" onclick="window.applyPresetTheme('gold')">👑 রয়্যাল গোল্ড</div>
+                <div class="theme-opt" onclick="window.applyPresetTheme('glass')">🔮 পিওর গ্লাস</div>
             </div>
 
             <h3>👤 প্রোফাইল সেটিংস</h3>
-            <label>プロファイル画像 (অ্যাডভান্সড ক্রপার):</label>
-            <input type="file" id="profileFileInput" accept="image/*" onchange="initCropEngine(event)">
+            <label>প্রোফাইল ছবি (অ্যাডভান্সড ক্রপার):</label>
+            <input type="file" id="profileFileInput" accept="image/*" onchange="window.initCropEngine(event)">
             <button class="btn-sec" style="background:#ef4444; margin-top:5px;" onclick="window.removeImg('profile')">ছবি রিমুভ করুন</button>
 
             <label>ভেরিফাইড ব্যাজ:</label>
-            <select id="vBadge" onchange="document.getElementById('verifiedBadge').style.display = this.value === 'yes' ? 'flex' : 'none'">
+            <select id="vBadge" onchange="window.updateVerifiedBadge(this.value)">
                 <option value="no">টিক চিহ্ন: না</option>
                 <option value="yes">টিক চিহ্ন: হ্যাঁ</option>
             </select>
@@ -160,20 +148,20 @@
             <button class="btn-sec" style="background:#ef4444; margin-top:5px;" onclick="window.removeImg('bg')">ছবি রিমুভ করুন</button>
 
             <label>আপনার নাম:</label>
-            <input type="text" id="nameInput" onkeyup="document.getElementById('displayName').innerText = this.value || 'আপনার নাম'" placeholder="নাম লিখুন">
+            <input type="text" id="nameInput" onkeyup="window.updateLiveName(this.value)" placeholder="নাম লিখুন">
 
             <label>বায়ো:</label>
-            <textarea id="bioInput" rows="3" onkeyup="document.getElementById('displayBio').innerText = this.value || 'আপনার বায়ো...'" placeholder="নিজের সম্পর্কে কিছু লিখুন"></textarea>
+            <textarea id="bioInput" rows="3" onkeyup="window.updateLiveBio(this.value)" placeholder="নিজের সম্পর্কে কিছু লিখুন"></textarea>
 
             <h3>🌐 সোশ্যাল মিডিয়া আইকন লিংকস</h3>
             <label><i class="fa-brands fa-facebook" style="color:#1877f2"></i> ফেসবুক ইউআরএল:</label>
-            <input type="url" id="fbLink" placeholder="https://facebook.com/..." oninput="updateSocialIcon('fb', this.value)">
+            <input type="url" id="fbLink" placeholder="https://facebook.com/..." oninput="window.updateSocialIcon('fb', this.value)">
             <label><i class="fa-brands fa-instagram" style="color:#c13584"></i> ইনস্টাগ্রাম ইউআরএল:</label>
-            <input type="url" id="instLink" placeholder="https://instagram.com/..." oninput="updateSocialIcon('inst', this.value)">
+            <input type="url" id="instLink" placeholder="https://instagram.com/..." oninput="window.updateSocialIcon('inst', this.value)">
             <label><i class="fa-brands fa-youtube" style="color:#ff0000"></i> ইউটিউব ইউআরএল:</label>
-            <input type="url" id="ytLink" placeholder="https://youtube.com/..." oninput="updateSocialIcon('yt', this.value)">
+            <input type="url" id="ytLink" placeholder="https://youtube.com/..." oninput="window.updateSocialIcon('yt', this.value)">
             <label><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> হোয়াটসঅ্যাপ লিংক:</label>
-            <input type="url" id="waLink" placeholder="https://wa.me/..." oninput="updateSocialIcon('wa', this.value)">
+            <input type="url" id="waLink" placeholder="https://wa.me/..." oninput="window.updateSocialIcon('wa', this.value)">
 
             <h3>🔘 কাস্টম বায়ো লিংক বাটন</h3>
             <input type="text" id="btnName" placeholder="বাটনের নাম">
@@ -184,7 +172,6 @@
             <button class="btn btn-finish" id="submitMainBtn" onclick="window.saveData()">🚀 বায়ু সম্পন্ন করুন</button>
         </div>
 
-        <!-- ২. ডান পাশের লাইভ প্রিভিউ স্ক্রিন -->
         <div class="preview-side">
             <div class="bg-blur" id="bgArea" style="background-color: #0b0f17;"></div>
             <div class="bg-overlay" id="overlayArea"></div>
@@ -209,7 +196,6 @@
         </div>
     </div>
 
-    <!-- ৩. ইমেজ ক্রপার পপআপ মোডাল -->
     <div class="modal-overlay" id="cropperModal">
         <div class="custom-modal">
             <h3 style="margin:0; border:none; text-align:center;">📐 ছবি সাইজ ও ক্রপ করুন</h3>
@@ -217,13 +203,12 @@
                 <img id="cropperTargetImg">
             </div>
             <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn-sec" style="flex:1; background:#ef4444;" onclick="closeCropModal(false)">বাতিল</button>
-                <button class="btn" id="cropConfirmBtn" style="flex:1; margin-top:0;" onclick="applyCroppedImage()">✓ ডান (Crop)</button>
+                <button class="btn-sec" style="flex:1; background:#ef4444;" onclick="window.closeCropModal(false)">বাতিল</button>
+                <button class="btn" id="cropConfirmBtn" style="flex:1; margin-top:0;" onclick="window.applyCroppedImage()">✓ ডান (Crop)</button>
             </div>
         </div>
     </div>
 
-    <!-- ৪. এডিট মোড অথেন্টিকেশন ভেরিফায়ার মোডাল -->
     <div class="modal-overlay" id="authModal">
         <div class="custom-modal">
             <h2>🔐 এডিট মোড ভেরিফিকেশন</h2>
@@ -233,7 +218,6 @@
         </div>
     </div>
 
-    <!-- ৫. সাকসেস লিংক উইন্ডো মোডাল -->
     <div class="modal-overlay" id="linkModal">
         <div class="custom-modal">
             <h2>🎉 বায়ু সম্পূর্ণ রেডি!</h2>
@@ -250,7 +234,6 @@
         </div>
     </div>
 
-    <!-- ক্রপার লাইব্রেরি স্ক্রিপ্ট এবং ফায়ারবেস লজিক মডিউল -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
@@ -271,7 +254,11 @@
         let btns = [], socialLinks = { fb:"", inst:"", yt:"", wa:"" }, targetId = null, loadedPassword = "";
         let isUsernameAvailable = false;
 
-        // ইউনিক আইডি জেনারেটর (_138A01)
+        // উইন্ডো স্কোপ ফাংশন (লাইভ আপডেট এরর ফিক্স)
+        window.updateLiveName = (val) => { document.getElementById('displayName').innerText = val || 'আপনার নাম'; };
+        window.updateLiveBio = (val) => { document.getElementById('displayBio').innerText = val || 'এখানে আপনার বিস্তারিত বায়ো দেখাবে...'; };
+        window.updateVerifiedBadge = (val) => { document.getElementById('verifiedBadge').style.display = val === 'yes' ? 'flex' : 'none'; };
+
         function generateRandomID() {
             const hex = "0123456789ABCDEF";
             let res = "_";
@@ -285,7 +272,6 @@
             checkUsernameAvailability(suggestedID);
         };
 
-        // রিয়েল-টাইম লাইভ আইডি চেকার (Debounce মেথডসহ)
         let checkTimeout;
         document.getElementById('usernameInput').addEventListener('keyup', (e) => {
             clearTimeout(checkTimeout);
@@ -323,7 +309,6 @@
             } catch(e) { console.error(e); }
         }
 
-        // পাসওয়ার্ড পলিসি ডিটেক্টর
         const pwdInput = document.getElementById('passwordInput');
         pwdInput.addEventListener('input', () => {
             const v = pwdInput.value;
@@ -338,7 +323,6 @@
             else { el.classList.remove('valid'); el.innerText = el.innerText.replace('✅', '❌'); }
         }
 
-        // ক্রপার ইঞ্জিন ইনিশিয়ালাইজেশন
         window.initCropEngine = (e) => {
             let file = e.target.files[0];
             if(!file) return;
@@ -378,11 +362,10 @@
                 
                 btn.innerHTML = "✓ ডান (Crop)";
                 btn.disabled = false;
-                closeCropModal(true);
+                window.closeCropModal(true);
             }, 200);
         };
 
-        // ব্যাকগ্রাউন্ড ছবি প্রসেসর
         window.encodeBgImg = (e) => {
             let file = e.target.files[0];
             if(!file) return;
@@ -407,7 +390,6 @@
             if(type === 'bg') { bPicBase64 = ""; document.getElementById('bgArea').style.backgroundImage = 'none'; }
         };
 
-        // থিম কালেকশন
         const themes = {
             neon: { bg: "#0b0f17", btnBg: "linear-gradient(45deg, #00f2fe, #4facfe)", btnText: "#000", shadow: "0 0 15px rgba(0,242,254,0.4)" },
             sunset: { bg: "linear-gradient(135deg, #1f1c2c, #928dab)", btnBg: "linear-gradient(45deg, #ff416c, #ff4b2b)", btnText: "#fff", shadow: "0 4px 15px rgba(255,75,43,0.4)" },
@@ -439,7 +421,7 @@
         window.updateSocialIcon = (platform, val) => {
             socialLinks[platform] = val;
             const iconEl = document.getElementById('live_' + platform);
-            if(val.trim() !== "") { iconEl.style.display = "flex"; iconEl.href = val; }
+            if(val && val.trim() !== "") { iconEl.style.display = "flex"; iconEl.href = val; }
             else { iconEl.style.display = "none"; }
         };
 
@@ -450,8 +432,6 @@
                 btns.push({ n, l });
                 renderButtons();
                 document.getElementById('btnName').value = ''; document.getElementById('btnLink').value = '';
-                
-                // বাটন যোগ হওয়ার পর স্ক্রল ডাউন এডিটর এনিমেশন ফিক্স
                 setTimeout(() => {
                     let panel = document.getElementById('editorPanel');
                     panel.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' });
@@ -462,7 +442,7 @@
         window.deleteBtn = (idx) => { btns.splice(idx, 1); renderButtons(); };
 
         function renderButtons() {
-            const t = themes[activeTheme];
+            const t = themes[activeTheme] || themes.neon;
             document.getElementById('buttonArea').innerHTML = btns.map(b => `
                 <a href="${b.l}" class="link-btn" target="_blank" style="background:${t.btnBg}; color:${t.btnText}; box-shadow:${t.shadow}; border:${activeTheme==='glass'?'1px solid rgba(255,255,255,0.1)':'none'}">${b.n}</a>
             `).join('');
@@ -472,7 +452,6 @@
             `).join('');
         }
 
-        // ক্লাউড ডেটাবেজ সাবমিট মেকানিজম
         window.saveData = async () => {
             let u = document.getElementById('usernameInput').value.trim();
             let p = document.getElementById('passwordInput').value;
@@ -515,7 +494,6 @@
             navigator.clipboard.writeText(el.value); alert("লিংক কপি হয়েছে!");
         };
 
-        // সিকিউরিটি লকআউট ভেরিয়েবল
         let failedAttempts = 0;
         window.verifyAndEdit = () => {
             if(failedAttempts >= 5) { alert("অতিরিক্ত ভুল চেষ্টার কারণে বাটন ব্লক হয়েছে। পেজ রিফ্রেশ করুন।"); return; }
@@ -529,12 +507,11 @@
             }
         };
 
-        // কীবোর্ড 'Enter' বাটন লিসেনার ফর পাসওয়ার্ড মোডাল
         document.getElementById('authPassword').addEventListener('keydown', (e) => {
             if(e.key === 'Enter') window.verifyAndEdit();
         });
 
-        // ইনিশিয়াল কোর রানার লজিক
+        // ওনলোড লাইফসাইকেল মেথড (সব ইনপুট ফিল্ড ডেটা রি-ইনজেকশন ফিক্স)
         window.onload = async () => {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
@@ -550,36 +527,41 @@
                         targetId = id;
                         isUsernameAvailable = true;
 
-                        // ডাইনামিক সোশ্যাল প্রিভিউ মেটা ট্যাগ ইনজেকশন
-                        document.title = d.name + " | Pro Bio";
-                        document.querySelector('meta[property="og:title"]').setAttribute("content", d.name);
-                        document.querySelector('meta[property="og:description"]').setAttribute("content", d.bio);
-                        if(d.pPic) document.querySelector('meta[property="og:image"]').setAttribute("content", d.pPic);
+                        try {
+                            document.title = d.name + " | Pro Bio";
+                            document.getElementById('metaOgTitle').setAttribute("content", d.name);
+                            document.getElementById('metaOgDesc').setAttribute("content", d.bio);
+                            if(d.pPic) document.getElementById('metaOgImg').setAttribute("content", d.pPic);
+                        } catch(e){}
 
-                        document.getElementById('displayName').innerText = d.name;
-                        document.getElementById('displayBio').innerText = d.bio;
+                        // ভিউ মোড লাইভ ডাটা রেন্ডারিং
+                        document.getElementById('displayName').innerText = d.name || "আপনার নাম";
+                        document.getElementById('displayBio').innerText = d.bio || "";
                         if(d.pPic) { pPicBase64 = d.pPic; document.getElementById('profileImg').src = d.pPic; document.getElementById('profileImg').style.display='block'; }
                         if(d.bgPic) { bPicBase64 = d.bgPic; document.getElementById('bgArea').style.backgroundImage = `url('${d.bgPic}')`; }
                         if(d.vBadge === 'yes') document.getElementById('verifiedBadge').style.display = 'flex';
                         
                         if(d.socialLinks) {
                             Object.keys(d.socialLinks).forEach(k => {
-                                if(d.socialLinks[k]) updateSocialIcon(k, d.socialLinks[k]);
+                                if(d.socialLinks[k]) window.updateSocialIcon(k, d.socialLinks[k]);
                             });
                         }
                         if(d.btns) { btns = d.btns; }
-                        if(d.theme) { applyPresetTheme(d.theme); }
+                        if(d.theme) { window.applyPresetTheme(d.theme); } else { renderButtons(); }
 
+                        // এডিট মোড চালু হলে ইনপুট প্যানেলে সমস্ত ডেটা পুশ মেকানিজম
                         if(mode === 'edit') {
                             document.getElementById('authModal').style.display = 'block';
-                            document.getElementById('usernameInput').value = d.username;
+                            document.getElementById('usernameInput').value = d.username || "";
                             document.getElementById('usernameInput').disabled = true;
                             document.getElementById('usernameStatus').innerHTML = "🔒 ইউজার আইডি পরিবর্তনযোগ্য নয়";
                             document.getElementById('usernameStatus').style.color = "#ffa500";
-                            document.getElementById('passwordInput').value = d.password;
-                            document.getElementById('nameInput').value = d.name;
-                            document.getElementById('bioInput').value = d.bio;
+                            
+                            document.getElementById('passwordInput').value = d.password || "";
+                            document.getElementById('nameInput').value = d.name || "";
+                            document.getElementById('bioInput').value = d.bio || "";
                             document.getElementById('vBadge').value = d.vBadge || "no";
+                            
                             if(d.socialLinks) {
                                 document.getElementById('fbLink').value = d.socialLinks.fb || "";
                                 document.getElementById('instLink').value = d.socialLinks.inst || "";
@@ -593,8 +575,6 @@
                 document.getElementById('editorPanel').classList.add('open');
             }
         };
-
-        window.addBtn = window.addBtn; window.deleteBtn = window.deleteBtn;
     </script>
     <script>
         function toggleMobileEditor() {
