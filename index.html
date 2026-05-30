@@ -3,214 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Bio Link</title>
+    <title>Pro Bio Link Generator</title>
+    
+    <!-- ডাইনামিক এসইও এবং সোশ্যাল প্রিভিউ মেটা ট্যাগ -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="My Pro Bio Link">
+    <meta property="og:description" content="Connect with me through my customized professional bio link.">
+    <meta property="og:image" content="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/user.svg">
+
+    <!-- Cropper.css এবং FontAwesome আইকন লাইব্রেরি -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* মূল পেজ ডিজাইন এবং ফন্ট সেটিংস */
-        body { margin: 0; font-family: sans-serif; background: #111; overflow-x: hidden; }
+        /* ডার্ক নিওন গ্লাসমরমফিজম কোর ডিজাইন */
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg-dark: #0a0c10;
+            --panel-bg: rgba(18, 22, 31, 0.85);
+            --border-glow: rgba(0, 242, 254, 0.2);
+        }
+
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg-dark); 
+            color: #fff;
+            overflow-x: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-container { display: flex; width: 100vw; height: 100vh; }
+        .editor-side { width: 450px; background: var(--panel-bg); backdrop-filter: blur(20px); border-right: 1px solid var(--border-glow); padding: 25px; box-sizing: border-box; overflow-y: auto; z-index: 10; transition: 0.3s; }
+        .preview-side { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; background: #05070a; overflow: hidden; }
+
+        /* মোবাইল ফ্লোটিং গিয়ার বাটন */
+        .toggle-editor-btn { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; z-index: 1000; display: none; justify-content: center; align-items: center; box-shadow: 0 0 15px var(--primary); }
+
+        h3 { margin-top: 25px; color: var(--primary); font-size: 16px; border-left: 3px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        label { font-size: 12px; font-weight: 600; margin-top: 15px; display: block; color: #a0aec0; }
+        input, select, textarea { width: 100%; margin: 6px 0; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; box-sizing: border-box; color: #fff; transition: 0.3s; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(0, 242, 254, 0.3); }
         
-        /* সেটিংস আইকন বাটন */
-        .settings-icon { position: fixed; bottom: 20px; right: 20px; background: #007bff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 26px; cursor: pointer; z-index: 1000; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; }
-        .settings-icon:hover { transform: rotate(90deg) scale(1.1); }
-        
-        /* এডিটর সাইডবার (টুলবার) */
-        .toolbar { position: fixed; top: 0; right: -400px; width: 350px; height: 100vh; background: #f4f6f9; padding: 25px 20px; box-sizing: border-box; overflow-y: auto; z-index: 999; transition: 0.4s; border-left: 1px solid #ddd; }
-        .toolbar.open { right: 0; }
-        .toolbar h3 { margin-top: 0; border-bottom: 2px solid #ccc; padding-bottom: 10px; color: #333; }
-        .toolbar label { font-size: 13px; font-weight: bold; margin-top: 15px; display: block; color: #555; }
-        
-        /* ইনপুট ফিল্ড ও বাটনসমূহ */
-        input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .btn { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; cursor: pointer; margin-top: 15px; font-weight: bold; transition: 0.2s; }
-        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-        .btn-finish { background: #e91e63; font-size: 18px; margin-top: 30px; margin-bottom: 30px;}
+        .btn { background: linear-gradient(45deg, #22c55e, #10b981); color: white; padding: 12px; border: none; border-radius: 8px; width: 100%; cursor: pointer; margin-top: 15px; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4); }
+        .btn-finish { background: linear-gradient(45deg, #ff007f, #7928ca); box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3); font-size: 16px; margin-top: 30px; }
+        .btn-finish:hover { box-shadow: 0 6px 25px rgba(255, 0, 127, 0.5); }
+        .btn-sec { background: rgba(255,255,255,0.1); color: #fff; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; }
+
         .row { display: flex; gap: 10px; } .col { flex: 1; }
         
-        /* ইউজারনেম সাজেশন ও পাসওয়ার্ড চেকার স্টাইল */
-        .suggestion-box { background: #e2e8f0; padding: 8px; border-radius: 6px; margin-top: 5px; font-size: 12px; cursor: pointer; display: inline-block; color: #0284c7; font-weight: bold; }
-        .pwd-requirement { font-size: 11px; color: #ef4444; margin-top: 2px; font-weight: 500; }
+        /* লাইভ স্ট্যাটাস ট্র্যাকার */
+        .suggestion-box { background: rgba(0, 242, 254, 0.1); padding: 8px; border-radius: 6px; margin-top: 5px; font-size: 12px; cursor: pointer; display: inline-block; color: var(--primary); font-weight: bold; border: 1px dashed var(--primary); }
+        .live-status { font-size: 12px; font-weight: bold; margin-top: 4px; display: block; }
+        .pwd-requirement { font-size: 11px; color: #ef4444; margin-top: 3px; display: flex; align-items: center; gap: 5px; }
         .pwd-requirement.valid { color: #22c55e; }
         
-        /* লাইভ বাটন লিস্ট এডিটর */
-        .added-btn-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
-        .del-btn { background: #dc3545; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+        /* প্রিভিউ এরিয়া ডিজাইন */
+        .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; filter: blur(8px); }
+        .bg-overlay { position: absolute; width: 100%; height: 100%; z-index: 1; background: rgba(5, 7, 10, 0.6); }
         
-        /* লাইভ প্রিভিউ সেকশন */
-        .preview-container { width: 100%; height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; }
-        .bg-blur { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; transition: 0.3s; }
-        .bg-overlay { position: absolute; width: 100%; height: 100%; z-index: 1; transition: 0.3s; }
+        .preview-content { position: relative; z-index: 2; width: 100%; max-width: 400px; text-align: center; padding: 30px 20px; color: white; height: 85vh; overflow-y: auto; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.08); box-sizing: border-box; }
         
-        /* কাঁচের মতো গ্লাসমরফিজম প্রিভিউ বক্স */
-        .preview-content { position: relative; z-index: 2; width: 100%; max-width: 420px; text-align: center; padding: 40px 20px; color: white; height: 90vh; overflow-y: auto; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); box-sizing: border-box; }
+        .profile-wrapper { position: relative; display: inline-block; margin-bottom: 15px; }
+        .profile-pic { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: none; border: 3px solid #fff; }
+        .verified-badge { position: absolute; bottom: 5px; right: 5px; background: #00f2fe; color: #000; border-radius: 50%; width: 22px; height: 22px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid #000; }
         
-        /* প্রোফাইল পিকচার এবং ভেরিফাইড ব্যাজ */
-        .profile-wrapper { position: relative; display: inline-block; margin: 0 auto 15px; }
-        .profile-pic { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; display: none; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .verified-badge { position: absolute; bottom: 10px; right: 10px; background: #007bff; color: white; border-radius: 50%; width: 25px; height: 25px; display: none; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; }
+        #displayName { margin: 10px 0 5px; font-weight: 700; font-size: 26px; }
+        #displayBio { font-size: 14px; opacity: 0.8; margin-bottom: 20px; white-space: pre-wrap; }
         
-        #displayName { margin: 10px 0 5px; font-weight: bold; font-size: 32px; }
-        #displayBio { font-size: 16px; white-space: pre-wrap; margin-bottom: 30px; opacity: 0.9; }
+        /* সোশ্যাল জোন */
+        .social-icons-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .social-icon-live { font-size: 20px; color: #fff; transition: 0.3s; text-decoration: none; width: 40px; height: 40px; display: none; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
+        .social-icon-live:hover { transform: scale(1.1); color: var(--primary); border-color: var(--primary); }
+
+        /* মোডাল গ্লাস স্টাইল */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(10px); }
+        .custom-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161b26; padding: 25px; border-radius: 16px; text-align: center; width: 90%; max-width: 420px; color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(0, 242, 254, 0.2); }
         
-        /* বায়ো লিংক বাটনসমূহ এবং অ্যানিমেশন */
-        .link-btn { display: flex; justify-content: center; align-items: center; width: 100%; padding: 16px; margin-bottom: 15px; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 16px; transition: 0.3s ease; box-sizing: border-box; }
-        .link-btn:hover { transform: scale(1.04); box-shadow: 0 8px 25px rgba(255,255,255,0.2) !important; }
-        
-        /* মোডাল উইন্ডো স্টাইল (পাসওয়ার্ড ও লিংক দেখানোর জন্য) */
-        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index: 2000; }
-        .custom-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 15px; text-align: center; width: 85%; max-width: 400px; color: #333; box-shadow: 0 0 30px rgba(0,0,0,0.6); }
+        .cropper-wrapper { width: 100%; height: 260px; background: #000; margin-top: 15px; border-radius: 8px; overflow: hidden; }
+        .cropper-wrapper img { max-width: 100%; display: block; }
+
+        /* লিংক বাটন এলিমেন্ট */
+        .link-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; transition: 0.3s; box-sizing: border-box; text-align: center; }
+        .link-btn:hover { transform: scale(1.03); }
+        .added-btn-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 10px; margin-top: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        .del-btn { background: #ef4444; color: white; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+
+        .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+        .theme-opt { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px; text-align: center; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+        .theme-opt:hover { border-color: var(--primary); background: rgba(0, 242, 254, 0.05); }
+
+        @media (max-width: 850px) {
+            .main-container { flex-direction: column-reverse; height: auto; }
+            .editor-side { width: 100%; height: auto; position: fixed; bottom: 0; left: 0; top: auto; max-height: 70vh; border-right: none; border-top: 1px solid var(--border-glow); display: none; border-radius: 20px 20px 0 0; }
+            .editor-side.open { display: block; }
+            .preview-side { width: 100vw; height: 100vh; }
+            .toggle-editor-btn { display: flex; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- সেটিংস গিয়ার বাটন -->
-    <button class="settings-icon" id="settingsIcon" onclick="document.getElementById('toolbar').classList.toggle('open')">⚙️</button>
+    <button class="toggle-editor-btn" id="toggleEditorBtn" onclick="toggleMobileEditor()">⚙️</button>
 
-    <!-- বাম পাশের কন্ট্রোল প্যানেল (টুলবার) -->
-    <div class="toolbar" id="toolbar">
-        <h3>🔐 অ্যাকাউন্ট সেটিংস</h3>
-        
-        <label>ইউজারনেম (কাস্টম আইডি):</label>
-        <div style="display: flex; align-items: center; background: #eee; padding-left: 10px; border-radius: 6px;">
-            <span style="font-weight: bold; color: #555;">boos@</span>
-            <input type="text" id="usernameInput" style="background: transparent; border: none; margin: 0;" placeholder="username">
-        </div>
-        <div id="suggestedUser" class="suggestion-box" onclick="applySuggestion()">🪄 সাজেস্টেড আইডি ব্যবহার করুন</div>
-
-        <label>সিক্রেট পাসওয়ার্ড:</label>
-        <input type="password" id="passwordInput" placeholder="কমপক্ষে ৬ ডিজিট, ১টি বড়, ১টি ছোট অক্ষর ও @">
-        <div id="pwdTracker">
-            <div id="reqLen" class="pwd-requirement">❌ কমপক্ষে ৬ ডিজিট</div>
-            <div id="reqUpper" class="pwd-requirement">❌ কমপক্ষে ১টি বড় হাতের অক্ষর (A-Z)</div>
-            <div id="reqLower" class="pwd-requirement">❌ কমপক্ষে ১টি ছোট হাতের অক্ষর (a-z)</div>
-            <div id="reqSpecial" class="pwd-requirement">❌ কমপক্ষে ১টি স্পেশাল ক্যারেক্টার (@)</div>
-        </div>
-
-        <hr>
-        <h3>⚙️ প্রোফাইল ও ডিজাইন</h3>
-        
-        <label>ফন্ট স্টাইল ও এলাইনমেন্ট:</label>
-        <div class="row">
-            <div class="col"><select id="fontStyle" onchange="document.getElementById('previewArea').style.fontFamily = this.value"><option value="sans-serif">Sans-serif</option><option value="serif">Serif</option><option value="monospace">Monospace</option></select></div>
-            <div class="col"><select id="textAlign" onchange="document.getElementById('previewArea').style.textAlign = this.value"><option value="center">মাঝে</option><option value="left">বামে</option><option value="right">ডানে</option></select></div>
-        </div>
-
-        <label>প্রোফাইল ছবি ও ব্যাজ:</label>
-        <input type="file" accept="image/*" onchange="encodeImg(event, 'profileImg')">
-        <div class="row">
-            <div class="col"><button class="btn" style="background:#6c757d; margin:5px 0; padding:8px;" onclick="removeImg('profileImg')">ছবি সরান</button></div>
-            <div class="col">
-                <select id="vBadge" onchange="document.getElementById('verifiedBadge').style.display = this.value === 'yes' ? 'flex' : 'none'" style="margin:5px 0; padding:8px;">
-                    <option value="no">টিক চিহ্ন: না</option>
-                    <option value="yes">টিক চিহ্ন: হ্যাঁ</option>
-                </select>
+    <div class="main-container">
+        <!-- ১. বাম পাশের এডিটর প্যানেল -->
+        <div class="editor-side" id="editorPanel">
+            <h2 style="margin-top:0; font-size:20px; color:#fff; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary)"></i> প্রফেশনাল বায়ো মেকার
+            </h2>
+            
+            <h3>🔐 অ্যাকাউন্ট ও সিকিউরিটি</h3>
+            <label>কাস্টম ইউজার আইডি:</label>
+            <div style="display: flex; align-items: center; background: rgba(255,255,255,0.05); padding-left: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <span style="font-weight: bold; color: #a0aec0; font-size:14px;">boos@</span>
+                <input type="text" id="usernameInput" style="background: transparent; border: none; margin: 0; padding-left:5px;" placeholder="username">
             </div>
-        </div>
-        
-        <div class="row">
-            <div class="col"><label>বর্ডার কালার:</label><input type="color" id="profBorderColor" value="#ffffff" onchange="document.getElementById('profileImg').style.borderColor = this.value"></div>
-            <div class="col"><label>সাইজ (px):</label><input type="number" id="profBorderWidth" value="4" onchange="document.getElementById('profileImg').style.borderWidth = this.value + 'px'"></div>
-        </div>
+            <div id="usernameStatus" class="live-status" style="color:#a0aec0;">💡 একটি ইউনিক আইডি টাইপ করুন।</div>
+            <div id="suggestedUser" class="suggestion-box">🪄 সাজেস্টেড আইডি তৈরি হচ্ছে...</div>
 
-        <label>ব্যাকগ্রাউন্ড ছবি:</label>
-        <input type="file" accept="image/*" onchange="encodeImg(event, 'bgArea', true)">
-        <button class="btn" style="background:#6c757d; margin:5px 0; padding:8px;" onclick="removeImg('bgArea', true)">ছবি সরান</button>
-        <div class="row">
-            <div class="col"><label>ব্লার (Blur):</label><input type="range" id="bgBlur" min="0" max="30" value="8" onchange="document.getElementById('bgArea').style.filter = `blur(${this.value}px)`"></div>
-            <div class="col"><label>ওভারলে:</label><input type="range" id="bgOverlay" min="0" max="9" value="4" onchange="document.getElementById('overlayArea').style.background = `rgba(0,0,0,0.${this.value})`"></div>
-        </div>
-
-        <label>আপনার নাম:</label>
-        <input type="text" id="nameInput" onkeyup="document.getElementById('displayName').innerText = this.value" placeholder="নাম">
-        <div class="row">
-            <div class="col"><label>কালার:</label><input type="color" id="nameColor" value="#ffffff" onchange="document.getElementById('displayName').style.color = this.value"></div>
-            <div class="col"><label>ফন্ট (px):</label><input type="number" id="nameSize" value="32" onchange="document.getElementById('displayName').style.fontSize = this.value + 'px'"></div>
-        </div>
-
-        <label>বায়ো:</label>
-        <textarea id="bioInput" rows="3" onkeyup="document.getElementById('displayBio').innerText = this.value" placeholder="বায়ো লিখুন"></textarea>
-        <label>বায়ো কালার:</label>
-        <input type="color" id="bioColor" value="#e0e0e0" onchange="document.getElementById('displayBio').style.color = this.value">
-
-        <hr>
-        <h3>🔘 বাটন কাস্টমাইজেশন</h3>
-        <input type="text" id="btnName" placeholder="বাটনের নাম">
-        <input type="url" id="btnLink" placeholder="https://...">
-        
-        <div class="row">
-            <div class="col"><label>ব্যাকগ্রাউন্ড:</label><input type="color" id="btnBg" value="#ffffff"></div>
-            <div class="col"><label>টেক্সট:</label><input type="color" id="btnText" value="#000000"></div>
-        </div>
-        <div class="row">
-            <div class="col"><label>বর্ডার কালার:</label><input type="color" id="btnBorderC" value="#ffffff"></div>
-            <div class="col"><label>বর্ডার (px):</label><input type="number" id="btnBorderW" value="0"></div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label>আকার:</label>
-                <select id="btnRadius"><option value="30px">গোল</option><option value="12px">বাঁকানো</option><option value="0px">চারকোনা</option></select>
+            <label>সিক্রেট এডিট পাসওয়ার্ড:</label>
+            <input type="password" id="passwordInput" placeholder="পাসওয়ার্ড দিন">
+            <div id="pwdTracker">
+                <div id="reqLen" class="pwd-requirement">❌ কমপক্ষে ৬ ডিজিট</div>
+                <div id="reqUpper" class="pwd-requirement">❌ কমপক্ষে ১টি বড় হাতের অক্ষর (A-Z)</div>
+                <div id="reqLower" class="pwd-requirement">❌ কমপক্ষে ১টি ছোট হাতের অক্ষর (a-z)</div>
+                <div id="reqSpecial" class="pwd-requirement">❌ কমপক্ষে ১টি স্পেশাল ক্যারেক্টার (@)</div>
             </div>
-            <div class="col">
-                <label>শ্যাডো:</label>
-                <select id="btnShadow"><option value="0 5px 15px rgba(0,0,0,0.3)">হ্যাঁ</option><option value="none">না</option></select>
+
+            <h3>🎨 প্রি-সেট থিম সিলেকশন</h3>
+            <div class="theme-grid">
+                <div class="theme-opt" onclick="applyPresetTheme('neon')">🌌 নিওন ডার্ক</div>
+                <div class="theme-opt" onclick="applyPresetTheme('sunset')">🌅 সানসেট</div>
+                <div class="theme-opt" onclick="applyPresetTheme('minimal')">🏳️ মিনিমাল</div>
+                <div class="theme-opt" onclick="applyPresetTheme('emerald')">🍃 এমারেল্ড</div>
+                <div class="theme-opt" onclick="applyPresetTheme('gold')">👑 রয়্যাল গোল্ড</div>
+                <div class="theme-opt" onclick="applyPresetTheme('glass')">🔮 পিওর গ্লাস</div>
             </div>
+
+            <h3>👤 প্রোফাইল সেটিংস</h3>
+            <label>プロファイル画像 (অ্যাডভান্সড ক্রপার):</label>
+            <input type="file" id="profileFileInput" accept="image/*" onchange="initCropEngine(event)">
+            <button class="btn-sec" style="background:#ef4444; margin-top:5px;" onclick="window.removeImg('profile')">ছবি রিমুভ করুন</button>
+
+            <label>ভেরিফাইড ব্যাজ:</label>
+            <select id="vBadge" onchange="document.getElementById('verifiedBadge').style.display = this.value === 'yes' ? 'flex' : 'none'">
+                <option value="no">টিক চিহ্ন: না</option>
+                <option value="yes">টিক চিহ্ন: হ্যাঁ</option>
+            </select>
+
+            <label>ব্যাকগ্রাউন্ড ছবি:</label>
+            <input type="file" accept="image/*" onchange="window.encodeBgImg(event)">
+            <button class="btn-sec" style="background:#ef4444; margin-top:5px;" onclick="window.removeImg('bg')">ছবি রিমুভ করুন</button>
+
+            <label>আপনার নাম:</label>
+            <input type="text" id="nameInput" onkeyup="document.getElementById('displayName').innerText = this.value || 'আপনার নাম'" placeholder="নাম লিখুন">
+
+            <label>বায়ো:</label>
+            <textarea id="bioInput" rows="3" onkeyup="document.getElementById('displayBio').innerText = this.value || 'আপনার বায়ো...'" placeholder="নিজের সম্পর্কে কিছু লিখুন"></textarea>
+
+            <h3>🌐 সোশ্যাল মিডিয়া আইকন লিংকস</h3>
+            <label><i class="fa-brands fa-facebook" style="color:#1877f2"></i> ফেসবুক ইউআরএল:</label>
+            <input type="url" id="fbLink" placeholder="https://facebook.com/..." oninput="updateSocialIcon('fb', this.value)">
+            <label><i class="fa-brands fa-instagram" style="color:#c13584"></i> ইনস্টাগ্রাম ইউআরএল:</label>
+            <input type="url" id="instLink" placeholder="https://instagram.com/..." oninput="updateSocialIcon('inst', this.value)">
+            <label><i class="fa-brands fa-youtube" style="color:#ff0000"></i> ইউটিউব ইউআরএল:</label>
+            <input type="url" id="ytLink" placeholder="https://youtube.com/..." oninput="updateSocialIcon('yt', this.value)">
+            <label><i class="fa-brands fa-whatsapp" style="color:#25d366"></i> হোয়াটসঅ্যাপ লিংক:</label>
+            <input type="url" id="waLink" placeholder="https://wa.me/..." oninput="updateSocialIcon('wa', this.value)">
+
+            <h3>🔘 কাস্টম বায়ো লিংক বাটন</h3>
+            <input type="text" id="btnName" placeholder="বাটনের নাম">
+            <input type="url" id="btnLink" placeholder="লিংক (https://...)">
+            <button class="btn" style="background:var(--primary); color:#000;" onclick="window.addBtn()">+ নতুন বাটন যোগ করুন</button>
+            <div id="addedButtonsList"></div>
+
+            <button class="btn btn-finish" id="submitMainBtn" onclick="window.saveData()">🚀 বায়ু সম্পন্ন করুন</button>
         </div>
 
-        <button class="btn" onclick="addBtn()">+ বাটন যোগ করুন</button>
-        
-        <!-- যোগ করা বাটনগুলোর তালিকা (ডিলিট করার জন্য) -->
-        <div id="addedButtonsList"></div>
+        <!-- ২. ডান পাশের লাইভ প্রিভিউ স্ক্রিন -->
+        <div class="preview-side">
+            <div class="bg-blur" id="bgArea" style="background-color: #0b0f17;"></div>
+            <div class="bg-overlay" id="overlayArea"></div>
+            
+            <div class="preview-content" id="previewArea">
+                <div class="profile-wrapper">
+                    <img id="profileImg" class="profile-pic">
+                    <div class="verified-badge" id="verifiedBadge">✓</div>
+                </div>
+                <h1 id="displayName">আপনার নাম</h1>
+                <p id="displayBio">এখানে আপনার বিস্তারিত বায়ো দেখাবে...</p>
+                
+                <div class="social-icons-container" id="socialIconZone">
+                    <a id="live_fb" class="social-icon-live" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a id="live_inst" class="social-icon-live" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a id="live_yt" class="social-icon-live" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                    <a id="live_wa" class="social-icon-live" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
 
-        <button class="btn btn-finish" onclick="saveData()">✅ বায়ু সম্পন্ন করুন</button>
-    </div>
-
-    <!-- ডান পাশের লাইভ প্রিভিউ এরিয়া -->
-    <div class="preview-container">
-        <div class="bg-blur" id="bgArea" style="background-color: #111;"></div>
-        <div class="bg-overlay" id="overlayArea" style="background: rgba(0,0,0,0.4);"></div>
-        
-        <div class="preview-content" id="previewArea">
-            <div class="profile-wrapper">
-                <img id="profileImg" class="profile-pic">
-                <div class="verified-badge" id="verifiedBadge">✓</div>
+                <div id="buttonArea"></div>
             </div>
-            <h1 id="displayName">আপনার নাম</h1>
-            <p id="displayBio">এখানে আপনার বিস্তারিত বায়ো দেখাবে...</p>
-            <div id="buttonArea"></div>
         </div>
     </div>
 
-    <!-- গেট পাসওয়ার্ড মোডাল (এডিট মোডে ঢোকার ভেরিফিকেশন) -->
+    <!-- ৩. ইমেজ ক্রপার পপআপ মোডাল -->
+    <div class="modal-overlay" id="cropperModal">
+        <div class="custom-modal">
+            <h3 style="margin:0; border:none; text-align:center;">📐 ছবি সাইজ ও ক্রপ করুন</h3>
+            <div class="cropper-wrapper">
+                <img id="cropperTargetImg">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-sec" style="flex:1; background:#ef4444;" onclick="closeCropModal(false)">বাতিল</button>
+                <button class="btn" id="cropConfirmBtn" style="flex:1; margin-top:0;" onclick="applyCroppedImage()">✓ ডান (Crop)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ৪. এডিট মোড অথেন্টিকেশন ভেরিফায়ার মোডাল -->
     <div class="modal-overlay" id="authModal">
         <div class="custom-modal">
             <h2>🔐 এডিট মোড ভেরিফিকেশন</h2>
-            <p>এই বায়োটি এডিট করতে আপনার সিক্রেট পাসওয়ার্ডটি দিন:</p>
+            <p>এই বায়োটি এডিট করতে আপনার পূর্বের সিক্রেট পাসওয়ার্ডটি দিন:</p>
             <input type="password" id="authPassword" placeholder="পাসওয়ার্ড লিখুন">
-            <button class="btn" onclick="verifyAndEdit()">প্রবেশ করুন</button>
+            <button class="btn" id="authSubmitBtn" style="background:var(--primary); color:#000;" onclick="window.verifyAndEdit()">প্রবেশ করুন</button>
         </div>
     </div>
 
-    <!-- সাকসেস লিংক জেনারেটর মোডাল (২টি লিংক দেখানোর জায়গা) -->
+    <!-- ৫. সাকসেস লিংক উইন্ডো মোডাল -->
     <div class="modal-overlay" id="linkModal">
         <div class="custom-modal">
-            <h2>🎉 বায়ু সম্পন্ন হয়েছে!</h2>
+            <h2>🎉 বায়ু সম্পূর্ণ রেডি!</h2>
             
-            <label style="text-align:left; font-weight:bold; display:block; font-size:12px;">🔗 শেয়ার লিংক (সবাইকে দেখানোর জন্য):</label>
-            <input type="text" id="shareLink" style="background:#eee;" readonly>
-            <button class="btn" style="margin-top:5px; padding:6px; font-size:13px;" onclick="copyURL('shareLink')">শেয়ার লিংক কপি করুন</button>
+            <label style="text-align:left; font-weight:bold; display:block; font-size:11px;">🔗 পাবলিক শেয়ার লিংক (সবাইকে দেখানোর জন্য):</label>
+            <input type="text" id="shareLink" style="background:rgba(255,255,255,0.1); color:var(--primary);" readonly>
+            <button class="btn" style="margin-top:5px; padding:8px; font-size:13px;" onclick="window.copyURL('shareLink')">লিংক কপি করুন</button>
             
-            <label style="text-align:left; font-weight:bold; display:block; font-size:12px; margin-top:15px; color:#e91e63;">🔐 এডিট লিংক (ভবিষ্যতে এডিট করার জন্য):</label>
-            <input type="text" id="editLink" style="background:#ffe4e6; color:#b91c1c;" readonly>
-            <button class="btn" style="margin-top:5px; padding:6px; font-size:13px; background:#e91e63;" onclick="copyURL('editLink')">এডিট লিংক কপি করুন</button>
+            <label style="text-align:left; font-weight:bold; display:block; font-size:11px; margin-top:15px; color:#ff007f;">🔐 এডমিন এডিট লিংক (ভবিষ্যতে এডিট করার জন্য):</label>
+            <input type="text" id="editLink" style="background:rgba(255,0,127,0.1); color:#ff45a4;" readonly>
+            <button class="btn" style="margin-top:5px; padding:8px; font-size:13px; background:#ff007f;" onclick="window.copyURL('editLink')">এডিট লিংক কপি করুন</button>
             
-            <button class="btn" style="background:#666; margin-top:20px;" onclick="window.location.href=window.location.href.split('?')[0]">নতুন তৈরি করুন</button>
+            <button class="btn" style="background:#334155; margin-top:20px;" onclick="window.location.href=window.location.href.split('?')[0]">নতুন তৈরি করুন</button>
         </div>
     </div>
 
-    <!-- ফায়ারবেস লজিক এবং স্ক্রিপ্ট মডিউল -->
+    <!-- ক্রপার লাইব্রেরি স্ক্রিপ্ট এবং ফায়ারবেস লজিক মডিউল -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
         import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
-        // ফায়ারবেস অ্যাপ কনফিগারেশন
         const app = initializeApp({
             apiKey: "AIzaSyAMieYVdk6IYh5IYjfiXY35MuXE8Qr75SA",
             authDomain: "bio00-f464e.firebaseapp.com",
@@ -222,234 +267,339 @@
         });
         const db = getDatabase(app);
 
-        let pPic = "", bPic = "", btns = [], targetId = null, loadedPassword = "";
+        let cropper = null, activeTheme = "neon", pPicBase64 = "", bPicBase64 = "";
+        let btns = [], socialLinks = { fb:"", inst:"", yt:"", wa:"" }, targetId = null, loadedPassword = "";
+        let isUsernameAvailable = false;
 
-        // ইউনিক ইউজারনেম সাজেশন জেনারেটর কোড (_138A01 ফরম্যাট)
-        function generateRandomSuffix() {
-            const chars = "0123456789ABCDEF";
-            let suffix = "_";
-            for(let i=0; i<6; i++) {
-                suffix += chars[Math.floor(Math.random() * 16)];
-            }
-            return suffix;
+        // ইউনিক আইডি জেনারেটর (_138A01)
+        function generateRandomID() {
+            const hex = "0123456789ABCDEF";
+            let res = "_";
+            for(let i=0; i<6; i++) res += hex[Math.floor(Math.random() * 16)];
+            return "user" + res;
         }
-        let generatedSuggestion = "user" + generateRandomSuffix();
-        document.getElementById('suggestedUser').innerText = "🪄 সাজেস্টেড আইডি: boos@" + generatedSuggestion;
-
-        window.applySuggestion = () => {
-            document.getElementById('usernameInput').value = generatedSuggestion;
+        let suggestedID = generateRandomID();
+        document.getElementById('suggestedUser').innerText = "🪄 সাজেস্টেড আইডি: boos@" + suggestedID;
+        document.getElementById('suggestedUser').onclick = () => { 
+            document.getElementById('usernameInput').value = suggestedID; 
+            checkUsernameAvailability(suggestedID);
         };
 
-        // পাসওয়ার্ড সিকিউরিটি এআইডিটেক্টর/ভ্যালিডেটর ট্র্যাকিং
-        const pwdInput = document.getElementById('passwordInput');
-        pwdInput.addEventListener('input', () => {
-            const val = pwdInput.value;
-            
-            const isLen = val.length >= 6;
-            const isUpper = /[A-Z]/.test(val);
-            const isLower = /[a-z]/.test(val);
-            const isSpecial = val.includes('@');
-            
-            updateRequirement('reqLen', isLen);
-            updateRequirement('reqUpper', isUpper);
-            updateRequirement('reqLower', isLower);
-            updateRequirement('reqSpecial', isSpecial);
+        // রিয়েল-টাইম লাইভ আইডি চেকার (Debounce মেথডসহ)
+        let checkTimeout;
+        document.getElementById('usernameInput').addEventListener('keyup', (e) => {
+            clearTimeout(checkTimeout);
+            let uVal = e.target.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+            e.target.value = uVal;
+            if(uVal.length < 3) {
+                document.getElementById('usernameStatus').innerHTML = "❌ আইডি কমপক্ষে ৩ অক্ষরের হতে হবে";
+                document.getElementById('usernameStatus').style.color = "#ef4444";
+                isUsernameAvailable = false;
+                return;
+            }
+            document.getElementById('usernameStatus').innerHTML = "⏳ চেক করা হচ্ছে...";
+            document.getElementById('usernameStatus').style.color = "var(--primary)";
+            checkTimeout = setTimeout(() => { checkUsernameAvailability(uVal); }, 500);
         });
 
-        function updateRequirement(id, isValid) {
-            const el = document.getElementById(id);
-            if(isValid) {
-                el.classList.add('valid');
-                el.innerText = el.innerText.replace('❌', '✅');
-            } else {
-                el.classList.remove('valid');
-                el.innerText = el.innerText.replace('✅', '❌');
+        async function checkUsernameAvailability(username) {
+            if(targetId && "boos_" + username === targetId) {
+                document.getElementById('usernameStatus').innerHTML = "✅ এটি আপনার বর্তমান আইডি";
+                document.getElementById('usernameStatus').style.color = "#22c55e";
+                isUsernameAvailable = true;
+                return;
             }
+            try {
+                const snapshot = await get(ref(db, 'bios/boos_' + username));
+                if(snapshot.exists()) {
+                    document.getElementById('usernameStatus').innerHTML = "❌ ID Already Taken! অন্য কিছু ট্রাই করুন।";
+                    document.getElementById('usernameStatus').style.color = "#ef4444";
+                    isUsernameAvailable = false;
+                } else {
+                    document.getElementById('usernameStatus').innerHTML = "✅ ID Available!";
+                    document.getElementById('usernameStatus').style.color = "#22c55e";
+                    isUsernameAvailable = true;
+                }
+            } catch(e) { console.error(e); }
         }
 
-        // ছবি প্রসেসিং ও এনকোডিং (Base64)
-        window.encodeImg = (e, id, isBg=false) => {
+        // পাসওয়ার্ড পলিসি ডিটেক্টর
+        const pwdInput = document.getElementById('passwordInput');
+        pwdInput.addEventListener('input', () => {
+            const v = pwdInput.value;
+            updateReq('reqLen', v.length >= 6);
+            updateReq('reqUpper', /[A-Z]/.test(v));
+            updateReq('reqLower', /[a-z]/.test(v));
+            updateReq('reqSpecial', v.includes('@'));
+        });
+        function updateReq(id, isOk) {
+            const el = document.getElementById(id);
+            if(isOk) { el.classList.add('valid'); el.innerText = el.innerText.replace('❌', '✅'); }
+            else { el.classList.remove('valid'); el.innerText = el.innerText.replace('✅', '❌'); }
+        }
+
+        // ক্রপার ইঞ্জিন ইনিশিয়ালাইজেশন
+        window.initCropEngine = (e) => {
             let file = e.target.files[0];
-            if (!file) return;
+            if(!file) return;
             let reader = new FileReader();
-            reader.onload = () => {
-                let result = reader.result;
-                if(isBg) { 
-                    bPic = result; 
-                    document.getElementById('bgArea').style.backgroundImage = "url('" + result + "')";
-                } else { 
-                    pPic = result; 
-                    document.getElementById('profileImg').src = result; 
-                    document.getElementById('profileImg').style.display = 'block'; 
-                }
+            reader.onload = function(event) {
+                document.getElementById('cropperTargetImg').src = event.target.result;
+                document.getElementById('cropperModal').style.display = 'block';
+                if(cropper) cropper.destroy();
+                setTimeout(() => {
+                    cropper = new Cropper(document.getElementById('cropperTargetImg'), {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        background: false,
+                        autoCropArea: 1
+                    });
+                }, 50);
             };
             reader.readAsDataURL(file);
         };
 
-        // ছবি রিমুভ করার ফাংশন
-        window.removeImg = (id, isBg=false) => {
-            if(isBg) {
-                bPic = "";
-                document.getElementById('bgArea').style.backgroundImage = "none";
-            } else {
-                pPic = "";
-                document.getElementById('profileImg').src = "";
-                document.getElementById('profileImg').style.display = 'none';
-            }
+        window.closeCropModal = (isSuccess) => {
+            document.getElementById('cropperModal').style.display = 'none';
+            if(!isSuccess) document.getElementById('profileFileInput').value = "";
         };
 
-        // কাস্টম বাটন অ্যাড ও ডিলিট ম্যানেজমেন্ট
-        window.addBtn = () => {
-            let n = document.getElementById('btnName').value, l = document.getElementById('btnLink').value;
-            if(n && l) {
-                btns.push({ n, l, bg: document.getElementById('btnBg').value, c: document.getElementById('btnText').value, r: document.getElementById('btnRadius').value, bc: document.getElementById('btnBorderC').value, bw: document.getElementById('btnBorderW').value, sh: document.getElementById('btnShadow').value });
-                renderBtns();
-                document.getElementById('btnName').value = ''; document.getElementById('btnLink').value = '';
-            }
+        window.applyCroppedImage = () => {
+            if(!cropper) return;
+            let btn = document.getElementById('cropConfirmBtn');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> প্রসেসিং...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                let canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
+                pPicBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                document.getElementById('profileImg').src = pPicBase64;
+                document.getElementById('profileImg').style.display = 'block';
+                
+                btn.innerHTML = "✓ ডান (Crop)";
+                btn.disabled = false;
+                closeCropModal(true);
+            }, 200);
         };
 
-        window.deleteBtn = (index) => {
-            btns.splice(index, 1);
-            renderBtns();
+        // ব্যাকগ্রাউন্ড ছবি প্রসেসর
+        window.encodeBgImg = (e) => {
+            let file = e.target.files[0];
+            if(!file) return;
+            let reader = new FileReader();
+            reader.onload = function(event) {
+                let img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    canvas.width = 500; canvas.height = 500;
+                    ctx.drawImage(img, 0, 0, 500, 500);
+                    bPicBase64 = canvas.toDataURL('image/jpeg', 0.5);
+                    document.getElementById('bgArea').style.backgroundImage = `url('${bPicBase64}')`;
+                };
+            };
+            reader.readAsDataURL(file);
         };
 
-        function renderBtns() {
-            // লাইভ ভিউ রেন্ডার
-            document.getElementById('buttonArea').innerHTML = btns.map(b => `<a href="${b.l}" class="link-btn" target="_blank" style="background:${b.bg}; color:${b.c}; border-radius:${b.r}; border:${b.bw}px solid ${b.bc}; box-shadow:${b.sh}">${b.n}</a>`).join('');
+        window.removeImg = (type) => {
+            if(type === 'profile') { pPicBase64 = ""; document.getElementById('profileImg').style.display = 'none'; document.getElementById('profileFileInput').value=""; }
+            if(type === 'bg') { bPicBase64 = ""; document.getElementById('bgArea').style.backgroundImage = 'none'; }
+        };
+
+        // থিম কালেকশন
+        const themes = {
+            neon: { bg: "#0b0f17", btnBg: "linear-gradient(45deg, #00f2fe, #4facfe)", btnText: "#000", shadow: "0 0 15px rgba(0,242,254,0.4)" },
+            sunset: { bg: "linear-gradient(135deg, #1f1c2c, #928dab)", btnBg: "linear-gradient(45deg, #ff416c, #ff4b2b)", btnText: "#fff", shadow: "0 4px 15px rgba(255,75,43,0.4)" },
+            minimal: { bg: "#ffffff", btnBg: "#111111", btnText: "#fff", shadow: "none" },
+            emerald: { bg: "#064e3b", btnBg: "linear-gradient(45deg, #34d399, #059669)", btnText: "#fff", shadow: "0 4px 12px rgba(5,150,105,0.3)" },
+            gold: { bg: "#1a1a1a", btnBg: "linear-gradient(45deg, #f6d365, #fda085)", btnText: "#000", shadow: "0 4px 15px rgba(253,160,133,0.4)" },
+            glass: { bg: "linear-gradient(45deg, #0f172a, #1e293b)", btnBg: "rgba(255,255,255,0.08)", btnText: "#fff", shadow: "none" }
+        };
+
+        window.applyPresetTheme = (themeKey) => {
+            activeTheme = themeKey;
+            const t = themes[themeKey];
+            const pArea = document.getElementById('previewArea');
             
-            // টুলবারের ভেতরে ডিলিট অপশনসহ রেন্ডার
+            if(themeKey === 'minimal') {
+                pArea.style.background = "#fff"; pArea.style.color = "#000"; pArea.style.borderColor = "#ddd";
+                document.getElementById('displayName').style.color = "#000"; document.getElementById('displayBio').style.color = "#444";
+            } else if(themeKey === 'glass') {
+                pArea.style.background = "rgba(255,255,255,0.03)"; pArea.style.color = "#fff";
+                document.getElementById('displayName').style.color = "#fff"; document.getElementById('displayBio').style.color = "#ccc";
+            } else {
+                pArea.style.background = "rgba(255,255,255,0.05)"; pArea.style.color = "#fff";
+                document.getElementById('displayName').style.color = "#fff"; document.getElementById('displayBio').style.color = "#a0aec0";
+            }
+            if(themeKey !== 'sunset') document.getElementById('bgArea').style.background = t.bg;
+            renderButtons();
+        };
+
+        window.updateSocialIcon = (platform, val) => {
+            socialLinks[platform] = val;
+            const iconEl = document.getElementById('live_' + platform);
+            if(val.trim() !== "") { iconEl.style.display = "flex"; iconEl.href = val; }
+            else { iconEl.style.display = "none"; }
+        };
+
+        window.addBtn = () => {
+            let n = document.getElementById('btnName').value.trim();
+            let l = document.getElementById('btnLink').value.trim();
+            if(n && l) {
+                btns.push({ n, l });
+                renderButtons();
+                document.getElementById('btnName').value = ''; document.getElementById('btnLink').value = '';
+                
+                // বাটন যোগ হওয়ার পর স্ক্রল ডাউন এডিটর এনিমেশন ফিক্স
+                setTimeout(() => {
+                    let panel = document.getElementById('editorPanel');
+                    panel.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' });
+                }, 100);
+            }
+        };
+
+        window.deleteBtn = (idx) => { btns.splice(idx, 1); renderButtons(); };
+
+        function renderButtons() {
+            const t = themes[activeTheme];
+            document.getElementById('buttonArea').innerHTML = btns.map(b => `
+                <a href="${b.l}" class="link-btn" target="_blank" style="background:${t.btnBg}; color:${t.btnText}; box-shadow:${t.shadow}; border:${activeTheme==='glass'?'1px solid rgba(255,255,255,0.1)':'none'}">${b.n}</a>
+            `).join('');
+            
             document.getElementById('addedButtonsList').innerHTML = btns.map((b, i) => `
-                <div class="added-btn-item">
-                    <span>${b.n}</span>
-                    <button class="del-btn" onclick="deleteBtn(${i})">🗑️</button>
-                </div>
+                <div class="added-btn-item"><span>${b.n}</span><button class="del-btn" onclick="window.deleteBtn(${i})"><i class="fa-solid fa-trash-can"></i></button></div>
             `).join('');
         }
 
-        // ফায়ারবেজে ডাটা সেভ করার মূল ফাংশন
+        // ক্লাউড ডেটাবেজ সাবমিট মেকানিজম
         window.saveData = async () => {
-            let uInput = document.getElementById('usernameInput').value.trim();
-            let pInput = document.getElementById('passwordInput').value;
+            let u = document.getElementById('usernameInput').value.trim();
+            let p = document.getElementById('passwordInput').value;
             
-            if(!uInput) { alert("অনুগ্রহ করে একটি ইউজারনেম দিন!"); return; }
+            if(!u) { alert("একটি ইউজারনেম দিন!"); return; }
+            if(!isUsernameAvailable) { alert("ইউজার আইডিটি অ্যাভেলেবল না!"); return; }
             
-            // পাসওয়ার্ড পলিসি রি-চেক ভ্যালিডেশন
-            const isPValid = pInput.length >= 6 && /[A-Z]/.test(pInput) && /[a-z]/.test(pInput) && pInput.includes('@');
+            const isPValid = p.length >= 6 && /[A-Z]/.test(p) && /[a-z]/.test(p) && p.includes('@');
             if(!isPValid) { alert("পাসওয়ার্ড শর্তাবলী পূরণ করেনি!"); return; }
 
-            let id = "boos_" + uInput;
+            let submitBtn = document.getElementById('submitMainBtn');
+            submitBtn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> বায়ো সেভ হচ্ছে...";
+            submitBtn.disabled = true;
 
-            // যদি নতুন ক্রিয়েশন মোড হয় তবে ইউজারনেম ডুপ্লিকেট চেক করবে
-            if(!targetId) {
-                const checkExits = await get(ref(db, 'bios/' + id));
-                if(checkExits.exists()) {
-                    alert("এই ইউজারনেমটি ইতিমধ্যে ব্যবহার করা হয়েছে! অন্য আইডি ট্রাই করুন বা সাজেস্টেড আইডি ব্যবহার করুন।");
-                    return;
-                }
-            }
+            let id = "boos_" + u;
 
             let payload = {
-                username: uInput,
-                password: pInput,
-                n: document.getElementById('displayName').innerText,
-                b: document.getElementById('displayBio').innerText,
-                p: pPic, bg: bPic, btns: btns,
-                vBadge: document.getElementById('vBadge').value,
-                style: {
-                    font: document.getElementById('fontStyle').value,
-                    align: document.getElementById('textAlign').value,
-                    pBc: document.getElementById('profBorderColor').value,
-                    pBw: document.getElementById('profBorderWidth').value,
-                    bBlur: document.getElementById('bgBlur').value,
-                    bOv: document.getElementById('bgOverlay').value,
-                    nC: document.getElementById('nameColor').value,
-                    nS: document.getElementById('nameSize').value,
-                    bC: document.getElementById('bioColor').value
-                }
+                username: u, password: p, theme: activeTheme,
+                name: document.getElementById('displayName').innerText,
+                bio: document.getElementById('displayBio').innerText,
+                pPic: pPicBase64, bgPic: bPicBase64, btns: btns, socialLinks: socialLinks,
+                vBadge: document.getElementById('vBadge').value
             };
 
             try {
                 await set(ref(db, 'bios/' + id), payload);
-                let baseUrl = window.location.href.split('?')[0];
-                document.getElementById('shareLink').value = baseUrl + "?id=" + id;
-                document.getElementById('editLink').value = baseUrl + "?id=" + id + "&mode=edit";
+                let base = window.location.href.split('?')[0];
+                document.getElementById('shareLink').value = base + "?id=" + id;
+                document.getElementById('editLink').value = base + "?id=" + id + "&mode=edit";
                 document.getElementById('linkModal').style.display = 'block';
-            } catch (error) {
-                alert("ডাটাবেজে সেভ করতে সমস্যা হয়েছে। ছবির ফাইল সাইজ কমিয়ে চেষ্টা করুন।");
+            } catch(e) { alert("ডাটাবেজ ত্রুটি!"); }
+            finally {
+                submitBtn.innerHTML = "🚀 বায়ু সম্পন্ন করুন";
+                submitBtn.disabled = false;
             }
         };
 
-        // লিংক কপি করার ফাংশন
-        window.copyURL = (fieldId) => { 
-            let targetField = document.getElementById(fieldId);
-            targetField.select();
-            navigator.clipboard.writeText(targetField.value);
-            alert("লিংকটি সফলভাবে কপি হয়েছে!"); 
+        window.copyURL = (fid) => {
+            let el = document.getElementById(fid); el.select();
+            navigator.clipboard.writeText(el.value); alert("লিংক কপি হয়েছে!");
         };
 
-        // পেজ লোড লজিক (ভিউ মোড বনাম এডিট মোড অথেন্টিকেশন)
+        // সিকিউরিটি লকআউট ভেরিয়েবল
+        let failedAttempts = 0;
+        window.verifyAndEdit = () => {
+            if(failedAttempts >= 5) { alert("অতিরিক্ত ভুল চেষ্টার কারণে বাটন ব্লক হয়েছে। পেজ রিফ্রেশ করুন।"); return; }
+            let inputPwd = document.getElementById('authPassword').value;
+            if(inputPwd === loadedPassword) {
+                document.getElementById('authModal').style.display = 'none';
+                document.getElementById('editorPanel').classList.add('open');
+            } else { 
+                failedAttempts++;
+                alert("ভুল পাসওয়ার্ড! চেষ্টা বাকি: " + (5 - failedAttempts)); 
+            }
+        };
+
+        // কীবোর্ড 'Enter' বাটন লিসেনার ফর পাসওয়ার্ড মোডাল
+        document.getElementById('authPassword').addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') window.verifyAndEdit();
+        });
+
+        // ইনিশিয়াল কোর রানার লজিক
         window.onload = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-            const mode = urlParams.get('mode');
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const mode = params.get('mode');
 
             if(id) {
-                // ভিউ বা এডিট মোডে থাকলে এডিটর প্যানেল প্রাথমিকভাবে বন্ধ থাকবে
-                document.getElementById('settingsIcon').style.display = 'none';
-                document.getElementById('toolbar').classList.remove('open');
-                
-                const s = await get(ref(db, 'bios/' + id));
-                if(s.exists()) {
-                    const d = s.val();
-                    loadedPassword = d.password;
-                    targetId = id;
+                document.getElementById('editorPanel').classList.remove('open');
+                try {
+                    const snap = await get(ref(db, 'bios/' + id));
+                    if(snap.exists()) {
+                        const d = snap.val();
+                        loadedPassword = d.password;
+                        targetId = id;
+                        isUsernameAvailable = true;
 
-                    // ডাটা প্রিভিউতে সেট করা
-                    document.getElementById('displayName').innerText = d.n;
-                    document.getElementById('displayBio').innerText = d.b;
-                    if(d.p) { document.getElementById('profileImg').src = d.p; document.getElementById('profileImg').style.display='block'; }
-                    if(d.bg) { document.getElementById('bgArea').style.backgroundImage = `url('${d.bg}')`; }
-                    if(d.vBadge === 'yes') { document.getElementById('verifiedBadge').style.display = 'flex'; }
-                    
-                    if(d.style) {
-                        document.getElementById('previewArea').style.fontFamily = d.style.font;
-                        document.getElementById('previewArea').style.textAlign = d.style.align;
-                        document.getElementById('profileImg').style.borderColor = d.style.pBc;
-                        document.getElementById('profileImg').style.borderWidth = d.style.pBw + 'px';
-                        document.getElementById('bgArea').style.filter = `blur(${d.style.bBlur}px)`;
-                        document.getElementById('overlayArea').style.background = `rgba(0,0,0,0.${d.style.bOv})`;
-                        document.getElementById('displayName').style.color = d.style.nC;
-                        document.getElementById('displayName').style.fontSize = d.style.nS + 'px';
-                        document.getElementById('displayBio').style.color = d.style.bC;
-                    }
-                    if(d.btns) { btns = d.btns; renderBtns(); }
+                        // ডাইনামিক সোশ্যাল প্রিভিউ মেটা ট্যাগ ইনজেকশন
+                        document.title = d.name + " | Pro Bio";
+                        document.querySelector('meta[property="og:title"]').setAttribute("content", d.name);
+                        document.querySelector('meta[property="og:description"]').setAttribute("content", d.bio);
+                        if(d.pPic) document.querySelector('meta[property="og:image"]').setAttribute("content", d.pPic);
 
-                    // যদি এডিট লিংকে ক্লিক করে আসে তবে পাসওয়ার্ড গেটওয়ে ওপেন হবে
-                    if(mode === 'edit') {
-                        document.getElementById('authModal').style.display = 'block';
+                        document.getElementById('displayName').innerText = d.name;
+                        document.getElementById('displayBio').innerText = d.bio;
+                        if(d.pPic) { pPicBase64 = d.pPic; document.getElementById('profileImg').src = d.pPic; document.getElementById('profileImg').style.display='block'; }
+                        if(d.bgPic) { bPicBase64 = d.bgPic; document.getElementById('bgArea').style.backgroundImage = `url('${d.bgPic}')`; }
+                        if(d.vBadge === 'yes') document.getElementById('verifiedBadge').style.display = 'flex';
                         
-                        // ফর্ম এডিটর ফিল্ডে আগের ওল্ড ডাটা লোড করে রাখা
-                        document.getElementById('usernameInput').value = d.username || "";
-                        document.getElementById('usernameInput').disabled = true; // একবার আইডি সেট হয়ে গেলে তা পরিবর্তন করা যাবে না
-                        document.getElementById('passwordInput').value = d.password || "";
-                        document.getElementById('nameInput').value = d.n;
-                        document.getElementById('bioInput').value = d.b;
+                        if(d.socialLinks) {
+                            Object.keys(d.socialLinks).forEach(k => {
+                                if(d.socialLinks[k]) updateSocialIcon(k, d.socialLinks[k]);
+                            });
+                        }
+                        if(d.btns) { btns = d.btns; }
+                        if(d.theme) { applyPresetTheme(d.theme); }
+
+                        if(mode === 'edit') {
+                            document.getElementById('authModal').style.display = 'block';
+                            document.getElementById('usernameInput').value = d.username;
+                            document.getElementById('usernameInput').disabled = true;
+                            document.getElementById('usernameStatus').innerHTML = "🔒 ইউজার আইডি পরিবর্তনযোগ্য নয়";
+                            document.getElementById('usernameStatus').style.color = "#ffa500";
+                            document.getElementById('passwordInput').value = d.password;
+                            document.getElementById('nameInput').value = d.name;
+                            document.getElementById('bioInput').value = d.bio;
+                            document.getElementById('vBadge').value = d.vBadge || "no";
+                            if(d.socialLinks) {
+                                document.getElementById('fbLink').value = d.socialLinks.fb || "";
+                                document.getElementById('instLink').value = d.socialLinks.inst || "";
+                                document.getElementById('ytLink').value = d.socialLinks.yt || "";
+                                document.getElementById('waLink').value = d.socialLinks.wa || "";
+                            }
+                        }
                     }
-                }
+                } catch(e) { console.error(e); }
+            } else {
+                document.getElementById('editorPanel').classList.add('open');
             }
         };
 
-        // পাসওয়ার্ড চেক করে এডিটর প্যানেল আনলক করার ভেরিফিকেশন ফাংশন
-        window.verifyAndEdit = () => {
-            let enteredPwd = document.getElementById('authPassword').value;
-            if(enteredPwd === loadedPassword) {
-                document.getElementById('authModal').style.display = 'none';
-                document.getElementById('settingsIcon').style.display = 'flex';
-                document.getElementById('toolbar').classList.add('open');
-            } else {
-                alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
-            }
-        };
+        window.addBtn = window.addBtn; window.deleteBtn = window.deleteBtn;
+    </script>
+    <script>
+        function toggleMobileEditor() {
+            document.getElementById('editorPanel').classList.toggle('open');
+        }
     </script>
 </body>
 </html>
